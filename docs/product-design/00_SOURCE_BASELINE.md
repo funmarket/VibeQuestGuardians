@@ -160,3 +160,7 @@ A no-direct-table-writes runtime policy requires a credible *working* owner-comm
 This document establishes a **controlled drafting basis**, not a complete approved application architecture. The next document should be `Requirements.md`, populated by feature-level source comparison, screen inventory, genuine mechanics, unknowns and 215 original IDs **without converting every UI record into a fabricated endpoint/table**. Domain and database approvals follow only after the feature requirements are coherent.
 
 **No remote repository, Railway or database mutation performed by preparing this baseline.**
+
+## Subsequent Product Owner decision — account categories (2026-10-30)
+
+The newest explicit Product Owner direction establishes **Vibe / Pro / Business** account categories: Vibe for members, Pro for individual professionals, Business for verified organization/Place operators. Both eligible Pro and Business may publish official Events; only authorized Business operators may manage certified Business Places. Preserve one D01 user identity, independent D07 Guardian qualifications and D05/D09/D11 authorization. This is a later product decision, not historical baseline evidence; see Requirements.md and the living product decisions register for the normative rule.
