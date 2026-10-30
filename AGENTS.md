@@ -134,3 +134,318 @@ Before any substantive assertion or action:
 - VibeBehaviorGate `skill.md`, `references/BEHAVIOR.md`, `references/EXECUTION_ACCEPTANCE_CLOSURE.md` — source policy this file operationalizes. Skill availability varies; this file is a repository-side practical summary, not proof the external skill was loaded.
 
 **Publication authority:** Product Owner explicitly authorized adding this agent guide as root `AGENTS.md` on `vibefoundation`. This does not authorize edits to `main`, deployment, schema changes, or publication of other unreviewed documents.
+
+# MANDATORY DECISION-PRESERVATION, NO-DRIFT & ARCHITECTURE-CONFORMANCE GATE
+
+**Priority: HARD BLOCKER — ALL AGENTS — EVERY VIBEQUESTGUARDIANS TASK**
+
+These rules supplement the existing VibeBehaviorGate and `AGENTS.md` requirements. They do not supersede approved Product Owner decisions.
+
+**Core principle: Preserve the product. Rebuild the engineering. Respect every established decision.**
+
+## RULE 1 — ESTABLISHED DECISIONS ARE BINDING, NOT SUGGESTIONS
+
+Before proposing, reviewing, generating or editing anything, an agent MUST identify all established decisions relevant to the task.
+
+The agent MUST distinguish:
+
+- **LOCKED / DIRECTED:** Explicitly established Product Owner rules.
+- **REVISED:** Rules explicitly changed by a newer Product Owner decision.
+- **PROPOSED:** New suggestions not yet approved.
+- **OPEN:** Genuine decisions not previously answered.
+
+An agent MUST NOT present a LOCKED or DIRECTED rule as a newly discovered idea, optional improvement or recommendation.
+
+**FAIL CONDITION:** An existing instruction is described as a suggestion without acknowledging that it is already binding.
+
+## RULE 2 — MANDATORY DECISION RECONCILIATION BEFORE OUTPUT
+
+Before producing a substantive answer, code, architecture or document, the agent MUST inspect the relevant governing instructions and previously accepted decisions.
+
+For architecture tasks, the minimum comparison includes:
+
+1. Current `AGENTS.md` and VibeBehaviorGate.
+2. Current approved Requirements.md.
+3. Current domain ownership register.
+4. Existing relevant architecture decisions.
+5. Supplied reference materials and source evidence where relevant.
+6. Latest explicit Product Owner corrections.
+
+The agent MUST reconcile any conflicting instruction using the existing authority hierarchy.
+
+**FAIL CONDITION:** A deliverable contains a contradiction that could have been detected from the governing sources.
+
+**ACTION:** Correct the contradiction before presenting the deliverable.
+
+## RULE 3 — ABSOLUTE NO-MONOLITHIC-FEATURE GATE
+
+The new VibeQuestGuardians application MUST NOT recreate the monolithic screen, component, service, hook or controller patterns found in the legacy application.
+
+Every substantial feature MUST have explicit internal responsibility boundaries, appropriate reusable components, and clearly defined interfaces.
+
+This applies to:
+
+- Frontend pages and components.
+- Feature state and user interactions.
+- Backend domain logic.
+- Data access.
+- Media and device capabilities.
+- Background processing.
+- Cross-domain orchestration.
+
+A page may compose multiple features but MUST NOT become their combined implementation or business authority.
+
+A domain may contain multiple related functions but MUST NOT become an unrestricted collection of unrelated workflows.
+
+File size alone is not the deciding factor: **responsibility, cohesion, coupling and independent maintainability are mandatory architectural criteria.**
+
+**FAIL CONDITION:** Distinct experiences are grouped into an ambiguous implementation boundary without explicitly separating their internal ownership and responsibilities.
+
+## RULE 4 — EXPLICIT FRONTEND FEATURE OWNERSHIP
+
+Every user-facing feature MUST have an identifiable frontend home and a clear relationship to its authoritative business-domain interfaces.
+
+Broad labels such as `social`, `chat`, `explore`, `share`, or `gossip-drift-pulls` MUST NOT hide several independently meaningful experiences behind one undifferentiated implementation.
+
+For example:
+
+- Gossip, Drift, Pulls, Vibes and Orbit remain distinguishable features.
+- VibeCheck and VibeFlash remain independently implemented experiences.
+- Community membership and Live Rooms remain separate responsibilities.
+- Trails, Guardians, Tours and reservations retain their distinct workflows.
+- Camera capture, filters, composition and publishing retain separate internal responsibilities.
+
+A shared utility may support multiple features. Sharing must not merge their ownership.
+
+**FAIL CONDITION:** An agent creates or recommends a broad feature grouping without showing how its constituent features remain independent.
+
+## RULE 5 — PRESERVE PRODUCT BEHAVIOR; REJECT LEGACY IMPLEMENTATION DEFECTS
+
+The Gemini ZIP and old application are references for intended functionality, interaction design, navigation, appearance and useful implementation concepts.
+
+They are NOT authoritative architecture or backend implementations.
+
+For each recovered feature, the agent MUST:
+
+1. Preserve its intended user-facing purpose and behavior unless superseded.
+2. Identify useful reusable concepts or bounded helpers.
+3. Place new implementation responsibilities under the appropriate owner.
+4. Replace mocks and fake persistence with genuine functionality.
+5. Preserve cross-feature connections.
+6. Reject legacy architectural coupling and simulated success.
+
+An agent MUST NOT remove a feature merely because its legacy backend was mocked, broken, missing or unfinished.
+
+An agent MUST NOT blindly copy legacy scripts.
+
+**FAIL CONDITION:** A feature is omitted because the old implementation was defective, or defective code is copied because it already exists.
+
+## RULE 6 — PRODUCT RELATIONSHIPS MUST NOT BE REINVENTED
+
+Existing business relationships and supported user journeys MUST be preserved.
+
+For example:
+
+**Vibe Trails:** Users can create, save, adopt, remix and share routes with attribution and lineage.
+
+**Vibe Tours:** Eligible Pro Guardians can create guided commercial experiences, including using existing or adopted Trails as their itinerary basis.
+
+The original Trail must retain its own identity and attribution. Commercial Tour information belongs to its proper owner.
+
+An agent MUST NOT redefine Tours as inherently unrelated to Trails or remove the ability to reuse existing Trails.
+
+**FAIL CONDITION:** A proposed architecture breaks a documented product relationship or silently removes an established interaction.
+
+## RULE 7 — DEVICE PERMISSIONS ARE MANDATORY PLATFORM CAPABILITIES
+
+Device permissions and capabilities MUST be explicitly represented in the application's architecture.
+
+At minimum:
+
+- Geographic location.
+- Camera.
+- Microphone.
+
+Permission handling MUST be reusable across all features and supported hosts.
+
+The design MUST distinguish:
+
+- Application explanation and consent.
+- Browser / operating-system permission.
+- Actual device capability availability.
+- Feature-specific privacy authorization.
+- Granted, denied, blocked, unavailable and revoked states.
+
+A custom permission dialog MUST NOT pretend to grant operating-system access.
+
+Device permission MUST NOT automatically authorize sharing private location or media with other users.
+
+**FAIL CONDITION:** Camera, microphone or location access is scattered across unrelated feature implementations with inconsistent authorization and error handling, or omitted from the platform architecture.
+
+## RULE 8 — CANONICAL BUSINESS OWNERSHIP MUST REMAIN INTACT
+
+The established 28 logical domains remain the complete initial product scope.
+
+Every authoritative business record and invariant MUST have one canonical owner.
+
+Frontend feature boundaries are NOT automatically additional backend domains.
+
+The number of domains MUST NOT automatically determine the number of:
+
+- Microservices.
+- Databases.
+- Deployments.
+- Workspace packages.
+- Database migrations.
+
+Cross-domain workflows MUST use explicit contracts and owner-authorized operations.
+
+**FAIL CONDITION:** A screen, convenience service or database utility becomes an unauthorized second writer of business state.
+
+## RULE 9 — NO AGENT-INITIATED POLICY CHANGES
+
+An agent MUST NOT silently change:
+
+- Feature availability.
+- Existing UI journeys.
+- Guardian eligibility.
+- Trail/Tour relationships.
+- Handshake rules.
+- VQ reward authority.
+- Marketplace commercial rules.
+- Device/privacy constraints.
+- Navigation structure.
+- The established scope of the 28 domains.
+
+An engineering alternative MAY be offered only when clearly marked **PROPOSED**, with its reason and impact.
+
+It MUST NOT be implemented or written into an authoritative specification as approved without the necessary authorization.
+
+**FAIL CONDITION:** General engineering preference overrides an explicit Product Owner decision.
+
+## RULE 10 — NO REDISCOVERY OF CLOSED DECISIONS
+
+An agent MUST NOT reopen or repeatedly question an already answered decision merely because it has not read the history properly.
+
+Before asking the Product Owner a question, the agent MUST search relevant documents, instructions, attachments and available source evidence.
+
+Only a genuine new conflict, demonstrated defect or explicit Product Owner revision may reopen an accepted decision.
+
+**FAIL CONDITION:** The Product Owner must repeat a decision already documented and applicable.
+
+## RULE 11 — DOCUMENT-PURPOSE FIREWALL
+
+Each governing document MUST fulfill its own purpose.
+
+**Requirements.md:** What the product must do; features, experiences, business rules and constraints.
+
+**Structure.md:** How the application is architecturally divided; modules, interfaces, dependencies, composition and ownership.
+
+**Database.md:** How persistent information is modeled, constrained, related and managed.
+
+**Implementation plans:** In what order engineering work is performed.
+
+**Testing and release records:** Evidence that implemented behavior works.
+
+An agent MUST NOT demand implementation/runtime proof to accept a product requirement for an application that has not yet been built.
+
+An agent MUST NOT overload Requirements.md with detailed SQL, infrastructure configuration or backend implementation code.
+
+**FAIL CONDITION:** Work is blocked by verification obligations belonging to a later development stage, or one document is used as an uncontrolled substitute for another.
+
+## RULE 12 — MANDATORY ARCHITECTURE CONTRADICTION TEST
+
+Before presenting Structure.md or any architectural revision, the agent MUST perform a separate conformance review.
+
+The review MUST explicitly examine:
+
+1. Monolithic feature or service risks.
+2. Frontend feature ownership.
+3. Backend canonical ownership.
+4. Cross-domain coordination.
+5. Legacy behavior preservation.
+6. Trail adoption, remix and Tour reuse.
+7. Device permissions and hardware access.
+8. Web/Telegram consistency.
+9. Media, messaging and real-time separation.
+10. No mocked business-state authority.
+11. Compatibility with established navigation and UI/UX.
+12. Conflicts with existing Product Owner decisions.
+
+A conflict MUST be corrected within the authorized task before presenting the revised document.
+
+**FAIL CONDITION:** The agent recommends fixing a contradiction that it just introduced into its own deliverable instead of correcting it before delivery.
+
+## RULE 13 — SECOND-PASS REVIEW MUST BE INDEPENDENT
+
+After drafting, the agent MUST perform a second review from the governing requirements and decisions back toward the deliverable.
+
+The second pass MUST ask:
+
+- Which binding decisions have not been represented?
+- Which existing features have been grouped incorrectly?
+- Which original experiences might be lost?
+- Which proposed design choice lacks authorization?
+- Which responsibilities are duplicated?
+- Which new assumptions have appeared?
+- Does this architecture recreate any known legacy anti-pattern?
+
+Reviewing headings, file counts, naming conventions or TypeScript compilation alone is insufficient.
+
+**FAIL CONDITION:** A deliverable is declared architecture-conformant based only on structural formatting or mechanical checks.
+
+## RULE 14 — NO SELF-GENERATED WORK OR APPROVAL LOOPS
+
+An agent MUST NOT convert ordinary in-scope corrections into unnecessary new projects, repeated Product Owner questions or additional documentation cycles.
+
+When an issue is answerable from available material, the agent MUST resolve it.
+
+When correcting its own draft within the authorized scope, the agent MUST make the correction and recheck it before reporting.
+
+A genuine decision requiring Product Owner authority must remain visibly separate from source-answerable engineering work.
+
+**FAIL CONDITION:** An agent creates extra work or blocks progress to resolve a problem that the existing instructions already answer.
+
+## RULE 15 — EVIDENCE-BASED FINAL RESPONSE
+
+Every substantive VibeQuestGuardians architecture response MUST distinguish:
+
+- Existing approved decisions.
+- Directly observed reference behavior.
+- Genuine new proposals.
+- Confirmed contradictions.
+- Unresolved material choices.
+
+The agent MUST NOT claim that an existing rule is a new idea.
+
+The agent MUST NOT claim that a review passed when a known contradiction remains.
+
+The agent MUST NOT claim files were saved, published, committed or deployed without corresponding evidence.
+
+**FAIL CONDITION:** The final response hides a contradiction, misclassifies an established decision, or inaccurately reports completed work.
+
+---
+
+## MANDATORY STOP / CORRECT / PROCEED LOGIC
+
+**STOP AND CORRECT BEFORE DELIVERY** when:
+
+- A draft contradicts an established rule.
+- A known feature is omitted without authorization.
+- A previously settled decision is reintroduced as optional.
+- A monolithic feature boundary is introduced.
+- Duplicate canonical business ownership is introduced.
+- A legacy mock is promoted into real application authority.
+- A document mixes responsibilities from different development stages.
+
+**STOP AND REQUEST A PRODUCT OWNER DECISION ONLY** when a genuine material policy choice remains unanswered after inspecting available evidence.
+
+**PROCEED** when the proposed work follows accepted rules, relevant source evidence is sufficient for the current stage, and no unauthorized change is needed.
+
+---
+
+## FINAL NON-NEGOTIABLE INVARIANT
+
+**No agent may replace established VibeQuestGuardians decisions with its own interpretation, omit known features because legacy code is defective, recreate monolithic implementations, or publish architectural work that contradicts the governing product and engineering rules.**
+
+**Every architecture deliverable must pass decision reconciliation and independent conformance review before presentation.**
