@@ -1,5 +1,25 @@
 # AGENTS.md — VibeQuestGuardians
 
+## MANDATORY FIRST READ — Source-of-Truth and Decision-Reconciliation Gate
+
+**BEFORE ANY PROJECT TASK, ANSWER, RECOMMENDATION OR MUTATION: READ AND ADOPT ALL TWELVE RULES.** These rules are binding alongside all existing AGENTS.md instructions and the full VibeBehaviorGate skill and references; they do not override accepted product decisions or grant publication authorization.
+
+1. **NO SOURCE, NO CLAIM.** Before any substantive project-specific answer, inspect the current authoritative documents and relevant live source. If evidence cannot be accessed, explicitly label the affected conclusion UNKNOWN or BLOCKED.
+2. **HANDOFFS ARE LOCATORS, NEVER AUTHORITY.** Treat memories, chat summaries and prior agent claims as pointers to evidence. Independently inspect the cited sources before relying on them.
+3. **SEARCH BEFORE ASKING.** Search current decisions, documents, supplied attachments and source history for an existing answer before asking the Product Owner.
+4. **NO REOPENING ACCEPTED DECISIONS.** Never mark an accepted decision OPEN unless a newer explicit decision, verified contradiction or demonstrated defect justifies it.
+5. **MANDATORY DECISION RECONCILIATION.** Before proposing a change, classify the governing behavior as DIRECTED, LOCKED, REVISED, PROPOSED or OPEN, with exact source and date/revision when available.
+6. **HISTORICAL REFERENCE FIREWALL.** Never import old VibeQuest, Gemini, Manus or HOOMA product policy, source topology, database identities or deployment choices as new VibeQuestGuardians authority.
+7. **SOURCE AND RUNTIME TRUTH MUST BE SEPARATE.** Source code is not evidence of installed migrations, serving versions, durable effects or working production behavior.
+8. **NO INTERPRETATION-BASED OVERRIDES.** Do not replace an explicit owner decision with an agent-preferred design. Proposals must be separately labeled and must not become requirements without approval.
+9. **CONTRADICTION BLOCKER.** Compare relevant governing documents before approving a recommendation or publishing. Resolve source-answerable inconsistencies and explicitly isolate genuine policy conflicts.
+10. **EVIDENCE LEDGER BEFORE CONCLUSIONS.** For material claims record source path, branch/SHA or artifact, evidence label, decision status, and any limitation. Do not present unsupported confidence as verification.
+11. **COMPLETE TASK, NOT NEW TASK.** Preserve the accepted restart point and authorized outcome. No new documents, architecture changes, deployments or secondary investigations without relevance and authority.
+12. **MANDATORY PRE-REPLY FAIL GATE.** If required source/decision reconciliation was not performed, do not give a confident project-specific answer. Perform the missing inspection or state exactly what cannot be verified.
+
+**Mandatory enforcement:** Inspect the live target source and relevant documents; reconcile existing decisions and accepted work; keep traceable evidence; report only supported claims. A failure to complete required inspection means no confident project-specific answer, approval, or mutation. If a source is inaccessible, identify exactly what remains UNKNOWN/BLOCKED. No repeated questions already answered by accessible sources.
+
+
 > **Status: Product Owner authorized for publication on `vibefoundation`.** Applies to every ChatGPT agent inspecting, designing, implementing, testing, operating or documenting this project. Read in full before work. Acknowledging this document is not compliance; demonstrate compliance with evidence.
 
 ## 0. Non-negotiable operating contract
