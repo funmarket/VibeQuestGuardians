@@ -1,16 +1,179 @@
-# VibeQuestGuardians — Requirements.md
+# VibeQuestGuardians — Product Requirements
 
-**ID:** VQ-REQ-001  
-**Date:** 2026-10-30  
-**Product:** VibeQuest  
-**Repository:** `funmarket/VibeQuestGuardians`, integration branch `vibefoundation`  
-**Status:** **PRODUCT OWNER APPROVED GOVERNING PRODUCT REQUIREMENTS.**  
-This document is the approved product-behavior baseline. Implementation remains subject to the approved Master Plan, current source verification, task authorization and acceptance gates.  
-**Purpose:** Reconstruct the intended VibeQuest app experience from the user-supplied latest Gemini application ZIP and safe-behavior extraction, with explicit owner-directed updates and independently designed, real engineering.
+**Document ID:** VQ-REQ-002  
+**Repository:** `funmarket/VibeQuestGuardians` / `vibefoundation`  
+**Status:** Product Owner product-behavior contract  
+**Authority:** `Master Plan.md` controls sequencing, operational evidence and acceptance. This document defines what the user and authorized operator must experience. `structure.md` defines implementation boundaries. `Database.md` defines conceptual persistence. Neither historical source nor an agent may silently change product policy.
 
-# Post-Baseline Product & Policy Updates — Master Plan Controlled
+## 1. Scope and product contract
 
-> **Authority notice:** This document remains the full product-behavior requirements baseline. The Product Owner-approved `Master Plan.md` and any later explicit Product Owner decisions supersede conflicting, incomplete, OPEN or UNSPECIFIED wording in this older baseline. Absence of a newer Master Plan rule from this file does not invalidate it. Latest explicit Product Owner direction remains highest authority; the approved `Master Plan.md` is the controlling implementation/production-execution authority beneath it.
+VibeQuest is one shared product delivered through responsive Web and Telegram Mini App host adaptation. It preserves five equal root destinations:
+
+- Home
+- Explore
+- Share
+- Vibe
+- Purse
+
+Guest users may browse approved public discovery. Authentication is required for protected actions. Web and Telegram must resolve to the same server-authoritative identity and business state.
+
+These requirements describe real behavior. A screen, mock response, localStorage value, optimistic UI state, seeded interaction or successful HTTP status is not acceptance unless the authoritative state transition is persisted and verified.
+
+## 2. Requirement authority and source recovery
+
+The Product Owner-approved `Master Plan.md` supersedes conflicting or incomplete wording. The attached Gemini ZIP and historical repositories are visual/interaction evidence only. They may help recover labels, layout, interaction choreography and bounded algorithms, but they cannot authorize:
+
+- fake users or canned conversations;
+- localStorage as business authority;
+- fabricated GPS, check-ins or geofences;
+- synthetic camera/selfie proof;
+- fake bookings, Handshakes, VQ, payments or tickets;
+- success after failed persistence;
+- a second identity, wallet, ledger or Telegram backend.
+
+Preserve intended user-facing capability while rebuilding its authority correctly.
+
+## 3. Product-wide truth rules
+
+Every consequential action must expose truthful loading, success, denial, failure, retry and unavailable states. Client timers are visual only; server time and persisted state decide deadlines and expiry. Permission dialogs cannot pretend to grant an OS/device capability.
+
+Location, camera and microphone are independent reusable capabilities. The product must distinguish application consent, host/OS permission, availability, revocation, denied state and failure.
+
+Admin Control Room is a first-class, scoped operational surface, not D29, not direct SQL and not a second business writer. It grows with the owning domains and invokes their authorized commands.
+
+## 4. Canonical policy rules
+
+### Handshake
+
+A qualifying accepted source agreement creates exactly one idempotent D22 Handshake. In Guardian/Legend/Tour service journeys, real provider acceptance is required; opening Hire or submitting a request is insufficient.
+
+The lifecycle is exactly:
+
+`NO_HANDSHAKE → ACTIVE → EXPIRED`
+
+The active lifetime is exactly 24 hours from server-authoritative issuance. There is no cancellation state. Cancelling the underlying booking/deal does not revoke, reset, delete or extend the Handshake.
+
+D22 owns identity, issuance, expiry, idempotency and review-eligibility proof. D19 owns Guardian/provider reputation-review content. D26 owns Marketplace product/deal-item review content.
+
+### VQ and Marketplace
+
+D20 is the only VQ writer. Marketplace VQ is direct buyer/user-to-seller/provider transfer through D20. Ordinary Marketplace has no default escrow, commission, delivery guarantee, authenticity guarantee, automatic refund or fiat-settlement proof. A VQ transfer does not prove delivery, physical handover or external payment.
+
+D27 is a future/explicitly authorized real-money payment boundary. Do not present a payment, refund or settlement as complete without authoritative provider and application evidence.
+
+### Places and confidence
+
+D05 owns Place truth, validation observations and confidence. Confidence policy is versioned, Admin-configurable through authorized D05 commands and auditable. Historical observations remain immutable and retain policy provenance.
+
+Current directed values:
+
+- Place check-in maximum: 5 m;
+- applicable nearby discovery scope: 23 km;
+- Find Hub temporary-position retention: 2 hours.
+
+These are not interchangeable thresholds. Real device location is required for proof; manual area selection is discovery context only.
+
+### Challenges and Vibes
+
+VibeCheck lasts 180 seconds. VibeFlash lasts 33 seconds. They are separate features and have no geographic participation gate.
+
+A qualifying reciprocal completed VibeCheck may establish exactly one idempotent D17 confirmed Vibe. Invitation acceptance, one-sided participation, Skip/Refuse, expiry, follow, mutual follow, compatibility score or ordinary VibeFlash participation does not establish a Vibe.
+
+### Trust and Safety
+
+A report is not punishment. D21 owns reports, cases, decisions, strikes, restrictions, suspensions, bans, appeals and case history. Source domains own their content/business records and apply authorized D21 outcomes through their own commands.
+
+## 5. Domain behavior contract
+
+The complete initial product includes D01–D28. Logical domain IDs identify canonical ownership; they do not require 28 services or screens.
+
+| ID | User-visible responsibility |
+|---|---|
+| D01 | account, session, credential, Telegram linking, recovery and scoped Admin authorization |
+| D02 | profile, preferences, privacy, localization and accessibility |
+| D03 | follow/block and Orbit/Echo relationship views |
+| D04 | consented location, presence, proximity and Find Hub |
+| D05 | Places, validation, check-in and confidence |
+| D06 | Trail creation, stops, publication, adoption, attribution and remix lineage |
+| D07 | Guardian/Legend/Pro eligibility, profiles, offers and qualifications |
+| D08 | Tour discovery, reservation, acceptance, cancellation and engagements |
+| D09 | Business/organization identity, branches and operator authority |
+| D10 | activities, schedules and participation |
+| D11 | Events and RSVP, separate from tickets |
+| D12 | posts, Vibes, Gossip, reactions, comments and visibility |
+| D13 | real image/video/audio capture, upload, variants and retention |
+| D14 | direct and contextual messaging with source authorization |
+| D15 | live-room sessions and participant/speaker state |
+| D16 | Communities, membership, roles and invitations |
+| D17 | Drift, Pulls, matching and confirmed Vibes |
+| D18 | VibeCheck/VibeFlash and Mosaic |
+| D19 | recognition, Passport, reputation and provider reviews |
+| D20 | VQ rules, grants, transfers, ledger and corrections |
+| D21 | reports, moderation, sanctions and appeals |
+| D22 | Handshake and review-eligibility window |
+| D23 | notification inbox, preferences and delivery |
+| D24 | advertising campaigns, placements and impressions |
+| D25 | subscriptions and entitlements |
+| D26 | Marketplace listings, offers, negotiation, deals and Marketplace reviews |
+| D27 | authorized/future real-money payments and billing |
+| D28 | ticket inventory, issuance, validation and admission |
+
+No feature may infer another domain’s state from display text, cached UI, mutual interest, or a successful notification.
+
+## 6. Root-destination acceptance
+
+### Home
+
+Home provides the approved city/context, check-in, Secrets, network/local/for-you discovery, activities, events, streak/passport-style recognition, local gems, guide content, live feed and Find Hub surfaces where their owning domains are available. It must show truthful unavailable states while a dependency is not implemented or accepted.
+
+### Explore
+
+Explore provides approved search/map/category/radar, Place validation, Secrets, Trail creation/remix/navigation, Guardian/Legend discovery and Tour/consultation journeys. It must preserve Trail attribution and lineage and must not treat external POI data as canonical VibeQuest Place truth.
+
+### Share
+
+Share provides camera/media composition, publishing, 24-hour content, Echoes, Communities, VibeCheck and VibeFlash journeys according to D12–D18 authorization. Capture failures must not create synthetic media or proof.
+
+### Vibe
+
+Vibe provides Gossip, Drift, Pulls, confirmed Vibes, Orbit/Echo following, matching and authorized messaging. A Pull or follow does not silently create a confirmed Vibe or ordinary personal-DM permission.
+
+### Purse
+
+Purse provides VQ balance/rules/ledger, approved transfers, Traveler Code concepts and genuine Marketplace state. It must never display client-minted balances or pretend that Marketplace VQ is escrow or payment settlement.
+
+## 7. Acceptance evidence
+
+A requirement is not accepted merely because a route, component, database table, migration file, or deployment exists. Applicable evidence includes:
+
+- authoritative persistence and invariant tests;
+- authorization and privacy denial tests;
+- idempotency and retry tests;
+- real device/host capability results where applicable;
+- integration tests against isolated PostgreSQL/PostGIS;
+- Worker/outbox/deadline behavior;
+- staging runtime evidence with exact serving revision and installed migrations;
+- representative browser and Telegram flows;
+- Admin scope and audit evidence.
+
+Use only the Master Plan status vocabulary: `PLANNED`, `READY`, `IN PROGRESS`, `IMPLEMENTED`, `VERIFIED`, `STAGING ACCEPTED`, `PRODUCTION ACCEPTED`, `BLOCKED`.
+
+## 8. Three open Product Owner policy gates
+
+Only these three policy choices remain open:
+
+1. Secret bounty-claim proximity;
+2. Validate approach-notification radius;
+3. VibeFlash scheduling/automation.
+
+Do not reopen settled Handshake cancellation, Marketplace default escrow/refund, D05 ownership, VQ ownership, or the 5 m / 23 km / 2-hour / 180-second / 33-second directed rules as if they were unspecified.
+
+## 9. S01 product boundary
+
+S01 establishes engineering substrate only. It does not complete any business domain. It may provide five-tab unavailable-state scaffolding, guest shell, configuration, API/Worker/client boundaries, migrations, readiness, CI and staging observability. It must not add fake business records or claim product acceptance.
+
+
+## 10. Detailed approved product baseline
 
 ## Requirements Delta A — Handshake — DIRECTED
 
