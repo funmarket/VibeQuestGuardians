@@ -6,7 +6,7 @@ This file is the repository’s durable agent guidance. Read it before acting. I
 
 - Repository: funmarket/VibeQuestGuardians
 - Working branch: vibefoundation
-- Current stage: PRE-S01 APPROVED GOVERNING-DOCUMENT BASELINE
+- Current stage: S01 IMPLEMENTED; staging not accepted
 - Product: VibeQuest
 - Stable/release branch: main
 
@@ -35,7 +35,7 @@ This file governs agent procedure, not product policy.
 
 ## 3. Current repository layout
 
-The current branch is a governing-document baseline. Do not assume application code exists.
+The current branch contains the S01 engineering substrate. Do not assume any business domain or staging environment exists.
 
     /
       AGENTS.md
