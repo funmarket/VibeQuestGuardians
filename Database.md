@@ -1,10 +1,160 @@
-# VibeQuestGuardians — Conceptual Database Architecture and ER Diagrams
+# VibeQuestGuardians — Conceptual Database and Persistence Contract
 
-**Status:** **PRODUCT OWNER APPROVED CONCEPTUAL DATABASE / PERSISTENCE BASELINE.** This document defines approved conceptual ownership, persistence relationships and invariants. It is NOT an executable schema, migration, installed database state, or permission to provision/mutate infrastructure. Historical Gemini ZIP and old VibeQuest GitHub are interaction evidence, not schema authorities. Latest explicit owner decisions supersede conflicting older drafts.
+**Document ID:** VQ-DB-002  
+**Repository:** `funmarket/VibeQuestGuardians` / `vibefoundation`  
+**Status:** Product Owner conceptual persistence contract  
+**Authority:** `Master Plan.md` controls sequencing and operational acceptance. This document defines conceptual ownership, relationships, invariants and migration constraints. It is not executable SQL, a physical schema, an installed database, a deployment instruction, or permission to mutate infrastructure.
 
-# Post-Baseline Persistence Updates — Master Plan Controlled
+## 1. Scope and interpretation
 
-> **Authority notice:** This document remains the Product Owner-approved conceptual persistence/invariant baseline. Newer explicit Product Owner decisions and the approved Master Plan persistence/operational clarifications control implementation where they supersede conflicting, incomplete, OPEN/UNSPECIFIED or absent older wording. These additions are conceptual ownership/persistence requirements, not executable SQL or physical table mandates.
+This document must be read together with `structure.md` and `Requirements.md`.
+
+- `structure.md` defines runtime boundaries and domain ownership.
+- `Requirements.md` defines user-visible behavior and product acceptance.
+- `Database.md` defines conceptual persistence and invariant requirements.
+- `Master Plan.md` defines slice order, evidence gates and release authority.
+
+PostgreSQL + PostGIS is the intended authoritative transactional/spatial platform. Physical tables, columns, indexes and ORM choices are implementation work and must be introduced incrementally from approved invariants. Do not generate a speculative schema for all 28 domains during S01.
+
+There is one canonical writer for each business fact. Admin Control Room, read models, audit records, notifications, search indexes and worker jobs do not become second writers. Admin is not D29.
+
+## 2. Persistence layers
+
+1. **Owner-domain records:** canonical facts and state transitions written only by their owning domain.
+2. **Cross-domain references:** stable IDs, source references and explicit contracts; never copied mutable business state.
+3. **Read projections:** permission-aware, rebuildable views for Home, Explore, Vibe, Purse and Admin.
+4. **Transactional outbox/inbox records:** durable delivery coordination; they do not replace source truth.
+5. **Privileged audit infrastructure:** immutable execution history for authorized actions; it records who/what/why/result but does not rewrite domain facts.
+6. **Media/object storage metadata:** D13 owns asset lifecycle; consuming domains own the meaning and authorization of an attachment.
+
+A projection may be stale only where the user-visible contract makes that state explicit. Consequential commands return authoritative status from the owner transaction.
+
+## 3. Canonical D01–D28 persistence ownership
+
+| Owner | Conceptual records and invariants |
+|---|---|
+| D01 Identity | canonical member UUID, account category (vibe/pro/business), sessions, credentials, Telegram links, recovery, Admin role/capability assignments and revocations |
+| D02 Profiles | public/expanded profile, preferences, privacy, localization and accessibility settings |
+| D03 Social Graph | directed follow and block edges; Orbit/Echo are views of one edge, not separate records |
+| D04 Geo Presence | consent, location evidence, accuracy/freshness, geofences, proximity assertions and retention |
+| D05 Places | Place truth, check-ins, validation observations, confidence result and versioned confidence policy |
+| D06 Trails | Trail, stops/order, lineage, revisions, publication and attribution |
+| D07 Guardians | eligibility, qualifications, live-selfie freshness, offers and capacity policy |
+| D08 Tours/Reservations | offers, slots, requests, acceptance/decline/cancellation and engagements |
+| D09 Businesses | organization, branch and operator authority |
+| D10 Activities | activity, schedule, participation and eligibility |
+| D11 Events | organizer event and RSVP; independent of D28 ticket inventory |
+| D12 Social Content | posts, Vibes, Gossip, comments, reactions, visibility and expiry |
+| D13 Global Media | upload session, asset, verification metadata, variants, access and retention |
+| D14 Messaging | conversation, membership, message, attachment reference, receipt and read state |
+| D15 Live Rooms | room session, participant and speaker state |
+| D16 Communities | community, membership, invitation, request, role and privacy |
+| D17 Matching | Drift, Pull, bilateral confirmation and confirmed Vibe |
+| D18 Challenges | VibeCheck/VibeFlash invitation, eligibility proof, responses, deadlines and Mosaic |
+| D19 Recognition | badges, Passport recognition, reputation and Guardian/provider review content |
+| D20 VQ Ledger | versioned rules, awards, grants, transfers, immutable postings and compensating corrections |
+| D21 Trust and Safety | reports, cases, decisions, strikes, restrictions, suspensions, bans, appeals and case history |
+| D22 Handshakes | qualifying agreement reference, participants, issuance, ACTIVE/EXPIRED lifecycle and review-eligibility proof |
+| D23 Notifications | inbox, preferences, delivery attempts, deduplication and deep-link metadata |
+| D24 Advertising | campaign, sponsorship, placement and impression accounting |
+| D25 Subscriptions | plan, subscription and entitlement lifecycle |
+| D26 Marketplace | listing, offer, negotiation, agreement/deal, deal state and Marketplace product/deal-item review |
+| D27 Payments/Billing | only explicitly authorized future real-money payment records, reconciliation and refunds |
+| D28 Ticketing | ticket inventory, issuance, validation and admission |
+
+No domain may update another owner’s canonical tables. Cross-domain coordination uses owner commands, typed capability ports, events or authorized projections.
+
+## 4. Required invariants
+
+### 4.1 Identity and authorization
+
+D01 owns the canonical identity and server-validated capability state. Account category is not a privilege shortcut. Telegram and Web resolve to the same D01 identity. Admin UI cannot elevate itself.
+
+### 4.2 Geo and Places
+
+D04 stores only consented, purpose-limited evidence with accuracy/freshness and retention. D05 owns Place truth and confidence. The current directed rules are:
+
+- Place check-in maximum: 5 m, with uncertainty handled truthfully;
+- applicable discovery scope: 23 km;
+- Find Hub temporary position retention: 2 hours;
+- real device location is required for proof;
+- manual city/area selection is discovery context, not verified presence;
+- D05 confidence policy is versioned, Admin-configurable through D05 commands and auditable;
+- historical observations are not rewritten when policy versions change.
+
+Do not reuse discovery radius as a proof threshold.
+
+### 4.3 VQ
+
+D20 is the sole VQ writer. Postings are immutable; corrections are compensating postings. Reward rules, grants, eligibility outcomes and source-event references are versioned/idempotent. VQ is an internal non-crypto unit.
+
+### 4.4 Handshake and reviews
+
+A qualifying accepted agreement creates exactly one idempotent D22 Handshake. For service flows, real provider acceptance is the trigger. D22 state is only:
+
+`ACTIVE → EXPIRED`
+
+Expiry is exactly 24 hours after issuance, server-authoritative and restart-safe. There is no CANCELLED Handshake state. Cancelling the source booking/deal does not revoke, reset, delete or extend an issued Handshake.
+
+D22 owns review-eligibility proof. D19 owns Guardian/provider reputation-review content. D26 owns Marketplace product/deal-item review content. Review content never proves delivery, authenticity, quality or payment.
+
+### 4.5 Marketplace and payments
+
+Marketplace VQ is direct buyer/user-to-seller/provider through D20. Ordinary Marketplace has no default escrow, commission, delivery guarantee, authenticity proof, automatic refund or fiat-settlement proof. D27 remains a future/explicitly authorized payment boundary.
+
+### 4.6 Trust and Safety
+
+A report creates report/case input, not automatic punishment. D21 owns case lifecycle, decisions, strikes, restrictions, suspensions, bans, appeals and immutable case history. Source domains retain their content/business records and apply authorized D21 outcomes through their own commands.
+
+### 4.7 Messaging, notifications and media
+
+D14 owns messages and conversation state; D23 owns delivery/inbox state; D13 owns media lifecycle; the originating domain owns the business meaning and authorization for an attachment or conversation context. Notification delivery cannot create a business event.
+
+### 4.8 Challenges and matching
+
+VibeCheck is 180 seconds and VibeFlash is 33 seconds. Timers are server-authoritative. Neither uses a geographic participation gate. A qualifying reciprocal completed VibeCheck may create exactly one D17 confirmed Vibe; invitation acceptance, one-sided participation, Skip/Refuse, expiry, follow or ordinary VibeFlash participation does not.
+
+## 5. Operational and migration records
+
+Cross-cutting operational persistence may include:
+
+- migration ledger with version, checksum, execution result and timestamp;
+- outbox/inbox delivery and lease records;
+- job attempt/retry/dead-letter state;
+- readiness/build/revision evidence;
+- privileged audit entries;
+- observability and correlation metadata.
+
+These records are infrastructure. They do not become a generic “Admin table” that duplicates domain truth.
+
+## 6. Migration authority and physical implementation
+
+The designated migration authority is the release/pre-deploy migration step, executed once against the target database before dependent API/Worker revisions are accepted. API replicas and Worker replicas must not race to migrate.
+
+The migration system must serialize execution, retain checksums, reject altered applied migrations, support expand/contract compatibility and expose the installed ledger for readiness/operations checks. A migration file in Git does not prove installation. PostGIS availability, required extensions, indexes and actual serving revision must be verified in the target environment.
+
+## 7. Test and staging rules
+
+Test fixtures and seeds are explicit test data only. Production business state must never come from localStorage, mock users, fabricated coordinates, canned messages or fake payment/ticket/media success.
+
+The isolated staging database must be persistent, production-shaped, separate from production credentials/data and observable by exact migration ledger and serving revision. Staging acceptance is not production acceptance.
+
+## 8. Physical-schema acceptance
+
+A physical migration or schema change is acceptable only when it identifies:
+
+- owning domain and canonical writer;
+- source requirement/invariant;
+- keys, uniqueness and foreign-key policy;
+- privacy/retention/security behavior;
+- transaction/idempotency behavior;
+- index/spatial strategy where relevant;
+- expand/contract and rollback/forward-fix considerations;
+- automated tests;
+- installed migration evidence in the target environment.
+
+
+## 10. Detailed approved persistence baseline
 
 ## Database Delta A — Additive operational records do not create new domains
 
