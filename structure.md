@@ -31,8 +31,8 @@ Use these sources in this order:
 
 1. latest explicit Product Owner direction;
 2. `Master Plan.md`;
-3. this `structure.md`;
-4. `Requirements.md`;
+3. `Requirements.md`;
+4. this `structure.md`;
 5. `Database.md`;
 6. historical repositories, ZIPs, design documents, and think-tank material.
 
