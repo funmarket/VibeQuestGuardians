@@ -25,10 +25,10 @@ describe('runtime readiness', () => {
 
   it('is not ready when PostGIS or the migration ledger is absent', async () => {
     const database = {
-      query: async (sql: string) => {
-        if (sql.includes('pg_extension')) return { rows: [] };
-        if (sql.includes('vq_schema_migrations')) return { rows: [] };
-        return { rows: [{}] };
+      query: async <T extends Record<string, unknown>>(sql: string): Promise<{ rows: T[] }> => {
+        if (sql.includes('pg_extension')) return { rows: [] as T[] };
+        if (sql.includes('vq_schema_migrations')) return { rows: [] as T[] };
+        return { rows: [{}] as T[] };
       },
     };
 
@@ -42,8 +42,8 @@ describe('runtime readiness', () => {
   it('is ready when all required substrate checks succeed', async () => {
     const database = {
       query: async (sql: string) => {
-        if (sql.includes('pg_extension')) return { rows: [{ extname: 'postgis' }] };
-        if (sql.includes('vq_schema_migrations')) return { rows: [{ version: '0001_postgis_foundation.sql' }] };
+        if (sql.includes('pg_extension')) return { rows: [{ extname: 'postgis' }] as T[] };
+        if (sql.includes('vq_schema_migrations')) return { rows: [{ version: '0001_postgis_foundation.sql' }] as T[] };
         return { rows: [{}] };
       },
     };
