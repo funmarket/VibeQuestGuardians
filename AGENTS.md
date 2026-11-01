@@ -6,7 +6,7 @@ This file is the repository’s durable agent guidance. Read it before acting. I
 
 - Repository: funmarket/VibeQuestGuardians
 - Working branch: vibefoundation
-- Current stage: S01 IMPLEMENTED; staging not accepted
+- Current stage: PRE-S01 APPROVED GOVERNING-DOCUMENT BASELINE
 - Product: VibeQuest
 - Stable/release branch: main
 
@@ -35,7 +35,7 @@ This file governs agent procedure, not product policy.
 
 ## 3. Current repository layout
 
-The current branch contains the S01 engineering substrate. Do not assume any business domain or staging environment exists.
+The current branch is a governing-document baseline. Do not assume application code exists.
 
     /
       AGENTS.md
@@ -64,11 +64,11 @@ Do not create these directories or claim they exist until implementation is expl
 
 ## 4. Commands and verification
 
-### Current commands and verification state
+### Current verified commands
 
-The current branch has a package manifest, CI workflow, migration runner, build scripts, test runner, lint command and typecheck command. CI run `41320408648` verified `npm install`, `npm run db:validate`, `npm run db:migrate`, `npm run db:status`, and `npm run check` for its exact commit.
+None. The current branch has no verified package manifest, dependency installation, build script, test runner, lint command, or typecheck command. Do not invent commands or copy them from historical repositories.
 
-That evidence does **not** make S01 `VERIFIED`: the current `check` command does not run the application build, and its format command is not yet a full-source formatting gate. Do not describe these commands as complete acceptance evidence.
+### Once implementation exists
 
 The owning implementation task must record the exact verified commands in EXECUTION_PLAN.md and the relevant handoff. At minimum, the repository must eventually expose and verify:
 
