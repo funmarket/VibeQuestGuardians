@@ -43,7 +43,7 @@ describe('runtime readiness', () => {
     const database = {
       query: async <T extends Record<string, unknown>>(sql: string): Promise<{ rows: T[] }> => {
         if (sql.includes('pg_extension')) return { rows: [{ extname: 'postgis' }] as unknown as T[] };
-        if (sql.includes('vq_schema_migrations')) return { rows: [{ version: '0001_postgis_foundation.sql' }] as T[] };
+        if (sql.includes('vq_schema_migrations')) return { rows: [{ version: '0001_postgis_foundation.sql' }] as unknown as T[] };
         return { rows: [{}] as T[] };
       },
     };
