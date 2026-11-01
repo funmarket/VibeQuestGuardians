@@ -164,7 +164,7 @@ An agent may not narrow, remove, skip, rename, or weaken a verification command 
 | Gemini reference | External local reference only | UX/interaction evidence; no implementation authority |
 | Historical repositories | Reference only | No blind code/schema/infrastructure transplant |
 
-**Current next permissible action:** obtain explicit implementation authorization for S01 with bounded source and runtime scope.
+**Current next permissible action:** execute only the approved S01-1 workspace/toolchain packet at `docs/architecture/S01-1-TOOLCHAIN-PACKET.md`; do not enter source, migration, CI, or Railway scope.
 
 ## 4. Progress board
 
@@ -172,7 +172,7 @@ Update this table only with evidence. Add commit SHA, test/run links, or runtime
 
 | Milestone | Name | Status | Dependencies | Owner/agent | Last update | Evidence |
 |---|---|---|---|---|---|---|
-| S01 | Engineering substrate, CI, migration, readiness, staging path | PLANNED | Governing docs, explicit authorization | Unassigned |  |  |
+| S01 | Engineering substrate, CI, migration, readiness, staging path | IN PROGRESS | Product Owner-approved Hooma-aligned technical direction; S01-1 packet | Platform tooling | S01-1 packet committed | `00de94d1`, `fc4011b7`; configuration/migration/runtime/staging evidence absent |
 | S02 | D01 identity, authorization, shell, Web/Telegram host authority | PLANNED | S01 | Unassigned |  |  |
 | S03 | D13 media and device capabilities | PLANNED | S01–S02 | Unassigned |  |  |
 | S04 | D02 profiles, D03 social graph, D09 business authority | PLANNED | S02–S03 | Unassigned |  |  |
@@ -569,6 +569,7 @@ Do not invent a workaround.
 | 2026-11-01 | Initial publication | Created self-contained execution-control document for S01–S18, agent handoffs, evidence, decisions, surprises and Gemini reference extraction. |
 | 2026-11-01 | Platform preferences added | Added D02 ownership, system/Telegram precedence, language/theme/text-size/accessibility behavior and S01/S02 acceptance evidence. |
 | 2026-11-01 | `0e8c2d22f9f0fa5952dfb15e51b5c725851a013c` | Added mandatory pre-implementation, test-first, readability, and verification-gate protection controls after the S01 process audit. |
+| 2026-11-01 | `fc4011b73a7b7700884d4d30a6dc5b097b8bdacc` | Recorded Product Owner-approved Hooma-aligned S01-1 workspace direction; source, migration, CI, Railway, and runtime work remain unimplemented. |
 
 Append every future plan change with date, commit SHA and semantic reason.
 
