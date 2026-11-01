@@ -114,7 +114,9 @@ This means:
 - Staging has not been accepted merely because documents exist.
 - Production has not been accepted merely because documents exist.
 
-The canonical agent continuation contract is [`EXECUTION_PLAN.md`](EXECUTION_PLAN.md). New agents must read it after this file and before selecting work. It records the phase sequence, no-mock/no-placeholder rules, authorization contract, acceptance evidence, handoff protocol and stop conditions.\n\nDocument approval does not authorize arbitrary execution:
+The canonical agent continuation contract is [`EXECUTION_PLAN.md`](EXECUTION_PLAN.md). New agents must read it after this file and before selecting work. It records the phase sequence, no-mock/no-placeholder rules, authorization contract, acceptance evidence, handoff protocol and stop conditions.
+
+Document approval does not authorize arbitrary execution:
 
 - document approval ≠ repository mutation authority
 - document approval ≠ database mutation authority
