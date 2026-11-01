@@ -1,8 +1,8 @@
 # VibeQuestGuardians — VibeQuest
 
-**Project stage: PRE-S01 APPROVED GOVERNING-DOCUMENT BASELINE.**
+**Project stage: S01 IMPLEMENTED; STAGING NOT ACCEPTED.**
 
-VibeQuestGuardians is the clean new implementation project for **VibeQuest**, a mobile-first local exploration, cultural Trails, Guardian, community, social, challenge, VQ, Marketplace, and local-commerce product. The Product Owner-approved governing set defines the complete target product and engineering boundaries. The application itself is not yet complete, S01 does not begin automatically, and neither staging nor production is accepted merely because the governing documents are approved.
+VibeQuestGuardians is the clean new implementation project for **VibeQuest**, a mobile-first local exploration, cultural Trails, Guardian, community, social, challenge, VQ, Marketplace, and local-commerce product. The Product Owner-approved governing set defines the complete target product and engineering boundaries. The S01 engineering substrate is implemented and CI-verified. No business domain is complete, and neither staging nor production is accepted.
 
 > **Approved governing documents ≠ implemented application ≠ staging acceptance ≠ production acceptance.**
 
@@ -80,9 +80,9 @@ S01 specifically prohibits bootstrap/import of legacy **code, schemas, migration
 
 HOOMA is a separate project and must never be mixed with VibeQuestGuardians repositories, accounts, schemas, infrastructure, evidence, or decisions.
 
-## S01 — next engineering slice, not yet automatic
+## S01 — implemented substrate; no business domain
 
-When explicitly authorized, S01 establishes the permanent engineering substrate:
+S01 establishes the permanent engineering substrate:
 
 - repository/workspace foundation
 - one shared Web/Telegram client
@@ -138,6 +138,6 @@ Historical evidence showed divergent Web/API revisions, a newer API deployment f
 
 ## Setup, local development, and deployment
 
-**No executable setup/deployment commands are documented here yet.** Add them only after the corresponding repository implementation actually exists and the commands have been verified against the exact current source and environment. Do not copy commands, environment names, provider configuration, or deployment assumptions from the historical application.
+**Verified CI commands:** `npm install`, `npm run db:migrate`, `npm run typecheck`, `npm run test`, `npm run lint`, and the bounded `npm run format:check` passed in CI run `41317527803` for commit `1fd4ea14a27f260ae7f0f0be8b0020e2c30ed8ac`. Full-source formatting, staging installation, and deployment commands remain intentionally open. Do not copy commands, environment names, provider configuration, or deployment assumptions from the historical application.
 
 **Status rule:** this README is a concise navigation and truth-in-status guide. It is not a replacement for the governing documents and is not evidence that the application, staging environment, database, or production release is complete.
