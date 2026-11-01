@@ -1,0 +1,2 @@
+export interface IsolatedTestEnvironment{databaseUrl:string;name:string}
+export function createIsolatedTestEnvironment(databaseUrl:string,name='vibequest_guardians_test'):IsolatedTestEnvironment{if(!databaseUrl)throw new Error('An explicit isolated test database URL is required');if(!/(^|[_-])test($|[_-])/i.test(new URL(databaseUrl).pathname))throw new Error('Test database URL must identify an isolated test database');return{databaseUrl,name}}

@@ -1,0 +1,34 @@
+name: S01 foundation checks
+on:
+  push:
+    branches: [vibefoundation]
+  pull_request:
+    branches: [vibefoundation]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: vibequest_guardians_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres -d vibequest_guardians_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/vibequest_guardians_test
+      VQ_ENVIRONMENT: ci
+      VQ_SERVICE_REVISION: ci
+      VQ_GIT_SHA: ci
+      VQ_DEPLOYMENT_ID: ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - run: npm run db:migrate
+      - run: npm run check

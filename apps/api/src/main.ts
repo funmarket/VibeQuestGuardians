@@ -1,0 +1,1 @@
+import{createApiServer}from'./server.js';import{loadApiConfig}from'./config.js';const config=loadApiConfig(process.env);await createApiServer(process.env).listen({host:config.host,port:config.port});
