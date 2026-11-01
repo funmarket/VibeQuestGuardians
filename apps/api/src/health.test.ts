@@ -26,7 +26,7 @@ describe('runtime readiness', () => {
   it('is not ready when PostGIS or the migration ledger is absent', async () => {
     const database = {
       query: async <T extends Record<string, unknown>>(sql: string): Promise<{ rows: T[] }> => {
-        if (sql.includes('pg_extension')) return { rows: [] as T[] };
+        if (sql.includes('pg_extension')) return { rows: [] as unknown as T[] };
         if (sql.includes('vq_schema_migrations')) return { rows: [] as T[] };
         return { rows: [{}] as T[] };
       },
