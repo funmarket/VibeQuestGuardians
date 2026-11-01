@@ -164,15 +164,7 @@ An agent may not narrow, remove, skip, rename, or weaken a verification command 
 | Gemini reference | External local reference only | UX/interaction evidence; no implementation authority |
 | Historical repositories | Reference only | No blind code/schema/infrastructure transplant |
 
-**Current next permissible action:** resolve S01-OPEN-001 through S01-OPEN-006 with explicit Product Owner approval, then commit a follow-up implementation packet with exact source paths, contracts, red tests, commands, and runtime probes. S01-OPEN-007 requires separate Railway/staging authorization.
-
-### S01-0 pre-implementation checkpoint
-
-| Item | Status | Evidence | Limitation / next condition |
-|---|---|---|---|
-| Technical-decision record | IMPLEMENTED | [S01-TECHNICAL-DECISIONS.md](docs/architecture/S01-TECHNICAL-DECISIONS.md), commit `2d4f1ce86d8fd9830a3e888262697253ed7503f1` | S01-OPEN-001 through S01-OPEN-007 remain BLOCKED; no technology or Railway target was selected. |
-| Durable implementation packet | IMPLEMENTED | [S01-IMPLEMENTATION-PACKET.md](docs/architecture/S01-IMPLEMENTATION-PACKET.md), commit `ca1e94bc5b370b8572665beaddace48f009f6c82` | It authorizes S01-0 documentation only; no production source may be added until a follow-up packet has exact paths, contracts, red tests, commands, and runtime probes. |
-| Application/runtime/migration/deployment | PLANNED | No source, dependency, CI, migration, database, Railway, or deployment artifact exists in the current branch. | Requires explicit resolution of the S01 open decisions and a separately approved bounded implementation task. |
+**Current next permissible action:** obtain explicit implementation authorization for S01 with bounded source and runtime scope.
 
 ## 4. Progress board
 
@@ -180,7 +172,7 @@ Update this table only with evidence. Add commit SHA, test/run links, or runtime
 
 | Milestone | Name | Status | Dependencies | Owner/agent | Last update | Evidence |
 |---|---|---|---|---|---|---|
-| S01 | Engineering substrate, CI, migration, readiness, staging path | PLANNED | S01-0 documentation complete; technical stack and staging target remain BLOCKED | Unassigned | S01-0 recorded | `2d4f1ce8`, `ca1e94bc`; no source/runtime/staging exists |
+| S01 | Engineering substrate, CI, migration, readiness, staging path | PLANNED | Governing docs, explicit authorization | Unassigned |  |  |
 | S02 | D01 identity, authorization, shell, Web/Telegram host authority | PLANNED | S01 | Unassigned |  |  |
 | S03 | D13 media and device capabilities | PLANNED | S01–S02 | Unassigned |  |  |
 | S04 | D02 profiles, D03 social graph, D09 business authority | PLANNED | S02–S03 | Unassigned |  |  |
