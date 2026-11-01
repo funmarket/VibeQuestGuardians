@@ -105,4 +105,4 @@ The follow-up packet must map each item to an exact test file, test name, expect
 - [x] No framework, package, service, database, migration, or provider was guessed.
 - [x] No source, dependency, CI, migration, or Railway resource was created.
 - [x] The technical-decision record identifies every unresolved decision as BLOCKED.
-- [ ] The execution plan has been updated with the final artifact commit SHAs.
+- [x] The execution plan was updated in commit `4f84e9f7564ca859606d06955655e2338c462c4e` with the artifact commit SHAs and remaining blockers.
