@@ -584,6 +584,7 @@ Do not invent a workaround.
 |---|---|---|
 | 2026-11-01 | Initial publication | Created self-contained execution-control document for S01–S18, agent handoffs, evidence, decisions, surprises and Gemini reference extraction. |
 | 2026-11-01 | Platform preferences added | Added D02 ownership, system/Telegram precedence, language/theme/text-size/accessibility behavior and S01/S02 acceptance evidence. |
+| 2026-11-01 | `0e8c2d22f9f0fa5952dfb15e51b5c725851a013c` | Added mandatory pre-implementation, test-first, readability, and verification-gate protection controls after the S01 process audit. |
 
 Append every future plan change with date, commit SHA and semantic reason.
 
