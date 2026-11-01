@@ -52,7 +52,7 @@ Use this order:
 | [`Requirements.md`](Requirements.md) | Product Owner-approved product-behavior baseline |
 | [`structure.md`](structure.md) | Product Owner-approved architecture/module/ownership baseline |
 | [`Database.md`](Database.md) | Product Owner-approved conceptual persistence/invariant baseline |
-| [`AGENTS.md`](AGENTS.md) | Mandatory execution/evidence/release discipline |
+| [`EXECUTION_PLAN.md`](EXECUTION_PLAN.md) | Canonical phase sequence, agent authorization, no-mock rules, acceptance and handoff contract |\n| [`AGENTS.md`](AGENTS.md) | Mandatory execution/evidence/release discipline |
 
 ### `docs/product-design/*`
 
@@ -97,7 +97,7 @@ When explicitly authorized, S01 establishes the permanent engineering substrate:
 - structured configuration
 - exact revision/deployment observability
 
-S01 completes **no business domain**. Five-tab placeholders may exist only as explicit navigation scaffolding/unavailable-state UI. No fake business state and no speculative all-domain physical schema.
+S01 completes **no business domain**. It must not add fake endpoints, mock responses, placeholder product features, fake business state, or speculative all-domain physical schema. A real client shell may be created only when its behavior is genuinely implemented and verified; otherwise the capability remains absent, not simulated.
 
 ## Exactly three current Product Owner policy gates
 
