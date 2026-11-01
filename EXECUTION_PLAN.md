@@ -51,6 +51,41 @@ Before any implementation agent acts:
 
 Historical VibeQuest, Hooma, Railway references, and the Gemini ZIP never override the governing set and must not be transplanted.
 
+## 3A. Gemini application reference protocol
+
+The supplied Gemini application files are **UX, interaction and behavior-reference material only**. They are not current implementation authority.
+
+Agents may inspect them to recover:
+
+- screens, navigation and visual hierarchy;
+- labels, user journeys and interaction choreography;
+- useful bounded presentation mechanics;
+- candidate pure algorithms requiring independent verification;
+- device-capability interaction patterns;
+- product functions that must be mapped to an approved D01–D28 owner.
+
+Agents must not copy, transplant, mechanically rename, or treat as authoritative any Gemini:
+
+- backend, API, database, Firebase/Firestore/Solana integration;
+- LocalStorage/session/authentication implementation;
+- domain singleton/store/repository;
+- seeded users, posts, contacts, balances, ledger entries or events;
+- mock provider, fallback coordinates, simulated camera, fake token or fake success path;
+- deployment, environment or infrastructure configuration.
+
+For every extracted feature or function, create an evidence row with:
+
+1. source file and observed behavior;
+2. intended user-visible purpose;
+3. proposed D01–D28 owner;
+4. required real persistence and authorization;
+5. relevant Master Plan/Requirements/Database rule;
+6. classification: `PRESERVE`, `ADAPT`, `REJECT`, or `OPEN`;
+7. verification required before implementation;
+8. explicit reason if any source behavior is rejected or changed.
+
+No Gemini item enters implementation merely because it exists in the files. The governing documents decide whether it belongs in the product, and the current architecture decides how it is rebuilt.
+
 ## 4. Current baseline
 
 Current repository stage:
