@@ -10,7 +10,7 @@ VibeQuestGuardians is the clean new implementation project for **VibeQuest**, a 
 
 - The complete initial product contains **D01–D28**. There is **no D29**. The 28 logical domains do not imply 28 services, databases, schemas, deployments, packages, or migrations.
 - One authoritative writer owns each business invariant; cross-domain journeys use explicit owner-authorized contracts/orchestration rather than duplicate writers.
-- The approved target architecture is a **modular monolith with explicit domain boundaries**, separately runnable worker(s), and one shared responsive Web/Telegram client.
+- The approved target is a clean domain-oriented system with separate Client, API and Worker runtime boundaries, explicit domain ownership, composition roots, one migration authority, readiness checks, exact deployment identity and isolated persistent staging. It is not a monolithic script, god service, universal repository, or second business writer. The API may initially host isolated domain modules in one deployable; the 28 logical domains are not 28 required microservices.
 - PostgreSQL + PostGIS is the intended authoritative transactional/spatial platform; physical schema and migrations are implemented incrementally when authorized.
 - Web and Telegram are one product with one canonical backend, identity, and data model. Telegram host APIs are adapters, not a separate business system.
 - Root navigation is **Home / Explore / Share / Vibe / Purse**, all equal-sized. Share may retain heart imagery but is not elevated, oversized, floating, or a larger central action.
