@@ -391,7 +391,8 @@ Only record decisions with evidence or explicit Product Owner direction. Do not 
 | DEC-002 | 2026-11-01 | Gemini application is UX/interaction reference only; no blind code, backend, schema, auth, payment, or deployment adoption. | Product Owner direction; `AGENTS.md`; this plan | All | Extract/map/classify before rebuilding. | LOCKED |
 | DEC-003 | 2026-11-01 | No fake placeholders, mocks, fake backend, or partial business functionality presented as available. | Product Owner direction; `AGENTS.md` | All | Incomplete capability remains unavailable, not simulated. | LOCKED |
 | DEC-004 | 2026-11-01 | S01 establishes substrate only and completes no business domain. | `Master Plan.md`, S01 contract | S01 | First implementation authorization must name S01. | LOCKED |
-| DEC-005 | 2026-11-01 | PostgreSQL + PostGIS is intended authoritative transactional/spatial persistence; one migration authority controls installation. | `Master Plan.md`, `Database.md` | S01 onward | No client/localStorage/Firebase authority. | LOCKED |\n| DEC-006 | 2026-11-01 | Language, theme, text-size, accessibility and host preference behavior use D02 ownership with system/Telegram detection and explicit-user override precedence. | Product Owner direction; this plan section 4A | S01–S02, S17 | Shared tokens/adapters first; real persistence and parity evidence before S02 acceptance. | LOCKED |
+| DEC-005 | 2026-11-01 | PostgreSQL + PostGIS is intended authoritative transactional/spatial persistence; one migration authority controls installation. | `Master Plan.md`, `Database.md` | S01 onward | No client/localStorage/Firebase authority. | LOCKED |
+| DEC-006 | 2026-11-01 | Language, theme, text-size, accessibility and host preference behavior use D02 ownership with system/Telegram detection and explicit-user override precedence. | Product Owner direction; this plan section 4A | S01–S02, S17 | Shared tokens/adapters first; real persistence and parity evidence before S02 acceptance. | LOCKED |
 
 When adding a decision, use:
 
@@ -498,7 +499,8 @@ Do not invent a workaround.
 
 | Date | Commit | Change |
 |---|---|---|
-| 2026-11-01 | Initial publication | Created self-contained execution-control document for S01–S18, agent handoffs, evidence, decisions, surprises and Gemini reference extraction. |\n| 2026-11-01 | Platform preferences added | Added D02 ownership, system/Telegram precedence, language/theme/text-size/accessibility behavior and S01/S02 acceptance evidence. |
+| 2026-11-01 | Initial publication | Created self-contained execution-control document for S01–S18, agent handoffs, evidence, decisions, surprises and Gemini reference extraction. |
+| 2026-11-01 | Platform preferences added | Added D02 ownership, system/Telegram precedence, language/theme/text-size/accessibility behavior and S01/S02 acceptance evidence. |
 
 Append every future plan change with date, commit SHA and semantic reason.
 
