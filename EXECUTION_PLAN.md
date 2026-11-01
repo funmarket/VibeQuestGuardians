@@ -164,7 +164,7 @@ An agent may not narrow, remove, skip, rename, or weaken a verification command 
 | Gemini reference | External local reference only | UX/interaction evidence; no implementation authority |
 | Historical repositories | Reference only | No blind code/schema/infrastructure transplant |
 
-**Current next permissible action:** execute only the approved S01-1 workspace/toolchain packet at `docs/architecture/S01-1-TOOLCHAIN-PACKET.md`; do not enter source, migration, CI, or Railway scope.
+**Current next permissible action:** complete the explicitly authorized documentation reconciliation and a fresh S01-1 readiness check; S01-1 implementation requires separate bounded authorization against a fresh `vibefoundation` HEAD. No source, migration, CI, Railway, runtime, database, deployment, or product behavior is authorized by this status entry.
 
 ## 4. Progress board
 
@@ -172,23 +172,23 @@ Update this table only with evidence. Add commit SHA, test/run links, or runtime
 
 | Milestone | Name | Status | Dependencies | Owner/agent | Last update | Evidence |
 |---|---|---|---|---|---|---|
-| S01 | Engineering substrate, CI, migration, readiness, staging path | IN PROGRESS | Product Owner-approved Hooma-aligned technical direction; S01-1 packet | Platform tooling | S01-1 packet committed | `00de94d1`, `fc4011b7`; configuration/migration/runtime/staging evidence absent |
+| S01 | Engineering substrate, CI, migration, readiness, staging path | PLANNED | Approved governing set; S01-1 packet prepared; separate implementation authorization required | Platform tooling | S01-1 planning packet committed; no implementation observed | `00de94d1`, `fc4011b7`, `9bc7e3f6`; no workspace/configuration/lockfile/source/test/migration/CI/runtime/staging evidence |
 | S02 | D01 identity, authorization, shell, Web/Telegram host authority | PLANNED | S01 | Unassigned |  |  |
 | S03 | D13 media and device capabilities | PLANNED | S01–S02 | Unassigned |  |  |
 | S04 | D02 profiles, D03 social graph, D09 business authority | PLANNED | S02–S03 | Unassigned |  |  |
-| S05 | D14 messaging, D23 notifications, D21 report/case core | PLANNED | S01–S04 | Unassigned |  |  |
+| S05 | D14 messaging, D23 notifications, D21 report/case core | PLANNED | S02; S03 where media/voice attachments are exercised | Unassigned |  |  |
 | S06 | D20 VQ ledger | PLANNED | S01–S02 | Unassigned |  |  |
-| S07 | D04 geo/presence and provider adapters | PLANNED | S01–S03 | Unassigned |  |  |
+| S07 | D04 geo/presence and provider adapters | PLANNED | S01 PostgreSQL/PostGIS; S02; S04; S05 | Unassigned |  |  |
 | S08 | D05 Places, validation, check-in, confidence | PLANNED | S03, S06, S07 | Unassigned |  |  |
-| S09 | D06 Trails | PLANNED | S03, S08 | Unassigned |  |  |
-| S10 | D07 Guardians, D08 Tours, D19 recognition, D22 Handshakes, D25 entitlements | PLANNED | S02–S10 dependencies in Master Plan | Unassigned |  |  |
-| S11 | D12 content, D16 communities, D15 live rooms | PLANNED | S03–S05 | Unassigned |  |  |
-| S12 | D17 matching, D18 challenges, confirmed Vibes | PLANNED | S05, S06, S10, S11 | Unassigned |  |  |
-| S13 | D10 activities, D11 events, D28 ticketing | PLANNED | S03, S05, S06, S08, S10 | Unassigned |  |  |
+| S09 | D06 Trails | PLANNED | S03; S04; S07; S08 | Unassigned |  |  |
+| S10 | D07 Guardians, D08 Tours, D19 recognition, D22 Handshakes, D25 entitlements | PLANNED | S04; S05; S06; S09 | Unassigned |  |  |
+| S11 | D12 content, D16 communities, D15 live rooms | PLANNED | S04; S05 | Unassigned |  |  |
+| S12 | D17 matching, D18 challenges, confirmed Vibes | PLANNED | S04; S05; S11 | Unassigned |  |  |
+| S13 | D10 activities, D11 events, D28 ticketing | PLANNED | S03; S04; S05; S08 | Unassigned |  |  |
 | S14 | D26 Marketplace, D27 payment boundary, Purse, reviews | PLANNED | S05, S06, S10 | Unassigned |  |  |
-| S15 | Admin completeness, Trust & Safety, business, advertising, operations | PLANNED | S02, S04–S14 | Unassigned |  |  |
-| S16 | Full Home/Explore/Share/Vibe/Purse composition | PLANNED | S01–S15 | Unassigned |  |  |
-| S17 | Web/Telegram parity and device acceptance | PLANNED | S01–S16 | Unassigned |  |  |
+| S15 | Admin completeness, Trust & Safety, business, advertising, operations | PLANNED | S02; S04; S05; S06; S08; S10; S11; S12; S13; S14 | Unassigned |  |  |
+| S16 | Full Home/Explore/Share/Vibe/Purse composition | PLANNED | S07; S08; S09; S10; S11; S12; S13; S14 where Purse/Marketplace links are consumed; S15 | Unassigned |  |  |
+| S17 | Web/Telegram parity and device acceptance | PLANNED | S02–S16 | Unassigned |  |  |
 | S18 | Production readiness, controlled release, post-deploy acceptance | PLANNED | S01–S17 staging accepted | Unassigned |  |  |
 
 ## 4A. Platform preferences and accessibility contract
@@ -225,19 +225,19 @@ The UI must show the effective source where that distinction matters and must no
 
 ### Acceptance evidence
 
-Before S02 can reach VERIFIED, tests and staging evidence must demonstrate:
+Before S02 can reach VERIFIED, shell/host-adapter tests and applicable acceptance evidence must demonstrate (without claiming durable D02 preference persistence):
 
 - browser system locale detection and explicit language override;
 - EN/FR/AR rendering and RTL layout where applicable;
 - browser system light/dark preference and explicit theme override;
 - Telegram host theme/language signals through the host adapter, with a truthful unavailable path;
 - system-default text sizing and explicit larger text settings without clipping or inaccessible controls;
-- persistence of D02 preferences across reload and Web/Telegram sessions for the same account;
+- correct contract and UI states for explicit authenticated preferences, with durable save/reload and same-account Web/Telegram persistence accepted under S04 rather than S02;
 - denial/failure handling when preference persistence is unavailable;
 - no localStorage/Firebase/Telegram host value is used as the canonical account preference;
 - no product business state is fabricated to demonstrate a preference.
 
-S01 must establish the shared preference interfaces, design tokens, host-adapter seams, and accessibility test harness without pretending to complete D02. S02 implements and verifies the real D02 preference behavior.
+**Preference sequencing (Master Plan):** S01 establishes interfaces, semantic tokens, RTL/text-scale foundations, host-adapter seams, and an accessibility test harness without owning D02 data. S02 boots the D01 shell with truthful browser/OS and Telegram host defaults and no canonical D02 writes or durable authenticated overrides. S04 implements and verifies D02-owned persisted profile/preferences/privacy/localization/accessibility overrides, including save/failure, reload, and same-account Web/Telegram consistency. S17 completes cross-host, EN/FR/AR, RTL, text scaling, responsiveness, and accessibility parity. No earlier shell behavior is evidence of S04/S17 acceptance.
 
 ## 5. Milestone contract
 
@@ -459,7 +459,7 @@ Only record decisions with evidence or explicit Product Owner direction. Do not 
 | DEC-003 | 2026-11-01 | No fake placeholders, mocks, fake backend, or partial business functionality presented as available. | Product Owner direction; `AGENTS.md` | All | Incomplete capability remains unavailable, not simulated. | LOCKED |
 | DEC-004 | 2026-11-01 | S01 establishes substrate only and completes no business domain. | `Master Plan.md`, S01 contract | S01 | First implementation authorization must name S01. | LOCKED |
 | DEC-005 | 2026-11-01 | PostgreSQL + PostGIS is intended authoritative transactional/spatial persistence; one migration authority controls installation. | `Master Plan.md`, `Database.md` | S01 onward | No client/localStorage/Firebase authority. | LOCKED |
-| DEC-006 | 2026-11-01 | Language, theme, text-size, accessibility and host preference behavior use D02 ownership with system/Telegram detection and explicit-user override precedence. | Product Owner direction; this plan section 4A | S01–S02, S17 | Shared tokens/adapters first; real persistence and parity evidence before S02 acceptance. | LOCKED |
+| DEC-006 | 2026-11-01 | Language, theme, text-size, accessibility and host preference behavior use D02 ownership with system/Telegram detection and explicit-user override precedence. | Product Owner direction; Master Plan S02/S04/S17; this plan section 4A | S01–S02, S04, S17 | Shared tokens/adapters in S01, shell/host defaults in S02, D02 durable preferences in S04, final parity in S17. | LOCKED |
 
 When adding a decision, use:
 
