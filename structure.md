@@ -238,9 +238,9 @@ A readiness failure must return a failure status and must not be hidden by a gre
 
 At release gates, verify the actual serving revision—not merely the build log or deployment record—and verify the installed migration ledger, required extensions such as PostGIS, configuration shape, Worker compatibility and representative authorized probes.
 
-## 9. Isolated staging
+## 9. Isolated staging environment
 
-Staging is a persistent, production-shaped environment isolated from production credentials, users, media, payments and business data. It must include the same runtime boundaries required by the slice:
+Staging is an isolated, persistent, production-shaped environment isolated from production credentials, users, media, payments and business data. It must include the same runtime boundaries required by the slice:
 
 - client;
 - API;
