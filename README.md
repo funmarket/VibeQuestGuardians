@@ -52,7 +52,8 @@ Use this order:
 | [`Requirements.md`](Requirements.md) | Product Owner-approved product-behavior baseline |
 | [`structure.md`](structure.md) | Product Owner-approved architecture/module/ownership baseline |
 | [`Database.md`](Database.md) | Product Owner-approved conceptual persistence/invariant baseline |
-| [`EXECUTION_PLAN.md`](EXECUTION_PLAN.md) | Canonical phase sequence, agent authorization, no-mock rules, acceptance and handoff contract |\n| [`AGENTS.md`](AGENTS.md) | Mandatory execution/evidence/release discipline |
+| [`EXECUTION_PLAN.md`](EXECUTION_PLAN.md) | Canonical phase sequence, agent authorization, no-mock rules, acceptance and handoff contract |
+| [`AGENTS.md`](AGENTS.md) | Mandatory execution/evidence/release discipline |
 
 ### `docs/product-design/*`
 
