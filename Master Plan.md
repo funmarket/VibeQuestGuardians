@@ -4,6 +4,22 @@
 
 > **For agentic workers:** Implement this plan only after explicit Product Owner authorization. Use bounded, source-verified vertical slices. A step is not complete until its acceptance contract is satisfied; a green build, created table, route, or screen is not completion evidence.
 
+## Explicit architecture and runtime-boundary clarification
+
+The implementation target is a clean domain-oriented system with separate application/runtime boundaries:
+
+- `apps/client`: one responsive Web client plus Telegram Mini App host adaptation; no direct database access or business authority.
+- `apps/api`: synchronous authenticated HTTP/realtime boundary composed from explicit owner-domain modules, capability ports, commands, queries and authorized projections.
+- `apps/worker`: separately runnable durable asynchronous runtime for outbox delivery, retries, deadlines, cleanup, media processing, projections and other explicitly owned jobs.
+- PostgreSQL + PostGIS: authoritative transactional/spatial persistence.
+- Object storage and external providers: replaceable adapters behind explicit ownership contracts.
+
+This is **not** a monolithic script, god service, universal repository, universal controller or second business writer. The API may initially host multiple isolated domain modules in one deployable, but each D01–D28 domain retains its own ownership, canonical writer, interfaces, persistence adapters and tests. The 28 logical domains are not a requirement for 28 microservices, databases or deployments.
+
+Composition roots may wire concrete implementations; business modules may not import foreign infrastructure or write foreign canonical records. Admin Control Room is a privileged orchestration surface, not D29 and not a direct-SQL writer.
+
+The migration authority is the designated release/pre-deploy migration step, executed once before dependent API/Worker revisions are accepted. API and Worker replicas must not race to migrate. Every deployable must expose separate liveness and dependency-aware readiness, plus exact repository/ref/commit, build artifact, serving revision and environment identity. Staging is an isolated, persistent, production-shaped environment and never substitutes for production acceptance.
+
 **Goal:** Move `funmarket/VibeQuestGuardians` from the approved pre-S01 documentation baseline to the complete production-ready product covering all 28 approved logical domains, all approved user experiences, real persistence, security, staging, operations, testing, release and production acceptance.
 
 **Architecture source and execution hierarchy:** Latest explicit Product Owner decisions remain highest authority. This Product Owner-approved `Master Plan.md` is the consolidated living implementation/operations authority and may contain newer directed decisions, implementation clarifications, Admin/governance controls and production-readiness requirements that are absent from older design documents. `Requirements.md` remains the full product-behavior source, `structure.md` the architecture/module ownership source, and `Database.md` the conceptual persistence/invariant source. A newer approved Master Plan clarification is not a defect merely because an older file did not mention it. Historical Gemini/old VibeQuest remain behavior/failure references only.
