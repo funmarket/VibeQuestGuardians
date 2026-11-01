@@ -80,6 +80,73 @@ Meaning:
 
 Do not use `done`, `complete`, `fixed`, `safe`, or `merged` as substitutes for these statuses.
 
+## 2.3 Mandatory engineering gates
+
+These gates are execution controls. They apply to every milestone and override schedule pressure or an agent's desire to begin implementation. They do not change product policy or authorize a mutation by themselves.
+
+### A. Pre-implementation gate
+
+Before any source change, every milestone must include a committed or recorded implementation packet containing:
+
+```yaml
+Milestone:
+Authorized scope:
+Non-goals:
+Exact repository/ref/HEAD:
+Files allowed to change:
+Files forbidden to change:
+Domain owner:
+Canonical writer:
+Interfaces/contracts:
+Behavior matrix:
+- success
+- empty state
+- invalid input
+- dependency failure
+- duplicate request
+- concurrent request
+- retry
+- timeout
+- cleanup/shutdown
+
+Tests to write first:
+Expected red result:
+Implementation strategy:
+Migration impact:
+Runtime/deployment impact:
+Verification commands:
+Runtime verification:
+Stop conditions:
+Open decisions:
+```
+
+No implementation commit is allowed until this packet exists. The packet must identify the current source state and the smallest intended change; it is not permission for unrelated cleanup, deployment, migration execution, or policy invention.
+
+### B. Test-first acceptance gate
+
+For every acceptance item, record:
+
+```text
+Requirement
+Test name/path
+Expected failure before implementation
+Implementation commit
+Green result
+Full-suite result
+Runtime evidence
+Remaining limitations
+```
+
+A feature cannot move from `READY` to `IMPLEMENTED` unless its acceptance tests exist. For behavior-changing work, the target test must be recorded as failing before the production implementation is added. CI confirms evidence; it is not the first meaningful verifier.
+
+### C. Readability gate
+
+Production source must be readable and reviewable. Compressed one-line source, generated application source, opaque code generation, and bulk source synthesis are prohibited unless explicitly authorized, documented, and reviewed.
+
+### D. Verification-gate protection
+
+An agent may not narrow, remove, skip, rename, or weaken a verification command to obtain a green result. Any required change to a gate requires Product Owner approval, a decision-log entry, and a replacement gate proving equal or stronger coverage.
+
 ## 3. Current project state
 
 | Item | Current verified state | Evidence/limitation |
