@@ -153,12 +153,12 @@ An agent may not narrow, remove, skip, rename, or weaken a verification command 
 |---|---|---|
 | Repository | `funmarket/VibeQuestGuardians` | Verify current HEAD before every mutation |
 | Working branch | `vibefoundation` | Integration branch; not proof of release |
-| Product stage | `S01 IMPLEMENTED; STAGING NOT ACCEPTED` | Source substrate and CI exist; no business domain is implemented |
-| Client | S01 technical shell exists | No product feature surface is enabled |
-| API | S01 runtime exists with liveness/readiness | Runtime acceptance remains evidence-based |
-| Worker | S01 separate runtime exists with liveness/readiness | Durable job behavior belongs to later milestones |
-| Physical database | CI-installed S01 PostGIS substrate | Only CI evidence exists; no staging database accepted |
-| Migrations | CI migration runner passed | S01 migration is PostGIS-only; staging installation remains open |
+| Product stage | `PRE-S01 APPROVED GOVERNING-DOCUMENT BASELINE` | Documents approved; application not accepted |
+| Client | Not verified as implemented in current branch | Do not assume source tree exists |
+| API | Not verified as implemented in current branch | Do not assume runtime exists |
+| Worker | Not verified as implemented in current branch | Must be separately runnable |
+| Physical database | Not verified | `Database.md` is conceptual, not installed state |
+| Migrations | Not verified | A migration file is not installation evidence |
 | Staging | Not accepted | Must be isolated, persistent, production-shaped |
 | Production | Not accepted | Requires S18 gates and explicit release authorization |
 | Gemini reference | External local reference only | UX/interaction evidence; no implementation authority |
@@ -172,7 +172,7 @@ Update this table only with evidence. Add commit SHA, test/run links, or runtime
 
 | Milestone | Name | Status | Dependencies | Owner/agent | Last update | Evidence |
 |---|---|---|---|---|---|---|
-| S01 | Engineering substrate, CI, migration, readiness, staging path | IMPLEMENTED | Commit `1fd4ea14a27f260ae7f0f0be8b0020e2c30ed8ac`; CI run `41317527803` | Codex | CI green; staging not accepted |
+| S01 | Engineering substrate, CI, migration, readiness, staging path | PLANNED | Governing docs, explicit authorization | Unassigned |  |  |
 | S02 | D01 identity, authorization, shell, Web/Telegram host authority | PLANNED | S01 | Unassigned |  |  |
 | S03 | D13 media and device capabilities | PLANNED | S01–S02 | Unassigned |  |  |
 | S04 | D02 profiles, D03 social graph, D09 business authority | PLANNED | S02–S03 | Unassigned |  |  |
@@ -242,22 +242,6 @@ S01 must establish the shared preference interfaces, design tokens, host-adapter
 ## 5. Milestone contract
 
 Each milestone is a complete, bounded deliverable. A milestone may be split into independently reviewable tasks, but no task may create fake business behavior or claim a domain is available before the milestone gate passes.
-
-
-**S01 implementation update — 2026-11-01**
-
-- Implemented in GitHub commit `1fd4ea14a27f260ae7f0f0be8b0020e2c30ed8ac`.
-- CI run `41317527803` passed migration, typecheck, tests, lint and the bounded root-config format gate.
-- The source substrate includes Client/API/Worker boundaries, shared contracts, runtime-health, isolated-test helper, PostGIS migration authority, readiness endpoints, and host-preference seams.
-- S01 is not `VERIFIED` or staging-accepted: no staging environment has been installed or exercised, and the current format gate does not yet cover all source files.
-
-
-**S01 hardening update — 2026-11-01**
-
-- Readiness now requires a non-empty PostGIS result and a non-empty migration ledger, covered by a red-green CI test cycle.
-- Migration status no longer exits before advisory-lock release, client release, and pool shutdown.
-- CI now runs `db:validate`, `db:migrate`, and `db:status` before the full check.
-- S01 remains `IMPLEMENTED`, not `VERIFIED`: full-source formatting is still not enforced, and staging has not been installed or accepted.
 
 ### S01 — Real engineering substrate
 
