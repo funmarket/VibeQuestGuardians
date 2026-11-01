@@ -64,11 +64,11 @@ Do not create these directories or claim they exist until implementation is expl
 
 ## 4. Commands and verification
 
-### Current verified commands
+### Current commands and verification state
 
-None. The current branch has no verified package manifest, dependency installation, build script, test runner, lint command, or typecheck command. Do not invent commands or copy them from historical repositories.
+The current branch has a package manifest, CI workflow, migration runner, build scripts, test runner, lint command and typecheck command. CI run `41320408648` verified `npm install`, `npm run db:validate`, `npm run db:migrate`, `npm run db:status`, and `npm run check` for its exact commit.
 
-### Once implementation exists
+That evidence does **not** make S01 `VERIFIED`: the current `check` command does not run the application build, and its format command is not yet a full-source formatting gate. Do not describe these commands as complete acceptance evidence.
 
 The owning implementation task must record the exact verified commands in EXECUTION_PLAN.md and the relevant handoff. At minimum, the repository must eventually expose and verify:
 
@@ -131,6 +131,23 @@ Before editing, record:
 - stop conditions.
 
 Make one bounded semantic change at a time. Do not bundle unrelated cleanup. If the branch drifts, ownership is unclear, a policy decision is needed, or proof is unavailable, stop and report UNKNOWN or BLOCKED.
+
+## 7A. Mandatory pre-implementation and verification rules
+
+For every implementation task:
+
+1. Read `EXECUTION_PLAN.md` before every implementation task.
+2. Do not mutate source without a completed implementation packet under the plan's pre-implementation gate.
+3. Write and record the relevant failing acceptance test before behavior-changing implementation.
+4. Make one semantic change per patch.
+5. Do not add compressed or generated production source.
+6. Do not weaken verification gates.
+7. `IMPLEMENTED` means source exists; `VERIFIED` requires every acceptance item.
+8. Treat CI as confirmation, not the first verifier.
+9. Before S01 can be `VERIFIED`, API and Worker must have runtime and shutdown tests.
+10. Point all plan evidence to the current branch HEAD.
+11. If current documents contradict source, stop and report the contradiction before implementation.
+12. Never mark S01 `VERIFIED` while full formatting, build, HTTP runtime tests, or staging limitations remain unresolved.
 
 ## 8. Done means evidence
 
