@@ -1,2 +1,0 @@
-export interface ApiConfig{host:string;port:number;databaseUrl:string}
-export function loadApiConfig(env:NodeJS.ProcessEnv):ApiConfig{if(!env.DATABASE_URL)throw new Error('DATABASE_URL is required');const port=Number(env.API_PORT??3000);if(!Number.isInteger(port)||port<1||port>65535)throw new Error('API_PORT must be a valid TCP port');return{host:env.API_HOST??'127.0.0.1',port,databaseUrl:env.DATABASE_URL}}
