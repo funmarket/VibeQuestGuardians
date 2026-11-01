@@ -124,13 +124,61 @@ Update this table only with evidence. Add commit SHA, test/run links, or runtime
 | S17 | Web/Telegram parity and device acceptance | PLANNED | S01–S16 | Unassigned |  |  |
 | S18 | Production readiness, controlled release, post-deploy acceptance | PLANNED | S01–S17 staging accepted | Unassigned |  |  |
 
+## 4A. Platform preferences and accessibility contract
+
+This contract is a prerequisite for S01/S02 client work. It prevents language, theme, text sizing, and accessibility behavior from being improvised separately by screens or host integrations.
+
+### Ownership
+
+- D02 owns authenticated user preferences, localization choice, accessibility settings and privacy-visible preference state.
+- Client platform adapters observe browser/OS capabilities and Telegram host signals. They do not become business authorities.
+- The shared Client design system owns tokens, semantic color roles, typography scales, directionality, safe-area handling and accessible component behavior.
+- The API persists explicit user overrides through D02 contracts. Local browser storage may cache non-authoritative UI state only; it must never be the canonical preference or identity store.
+- Telegram is a host adapter. It shares the same D01 identity and D02 preferences as Web and does not create a second settings authority.
+
+### Preference precedence
+
+For each supported preference, resolve in this order:
+
+1. explicit authenticated user override;
+2. Telegram host preference or theme signal, when available;
+3. browser/OS system preference;
+4. product default.
+
+The UI must show the effective source where that distinction matters and must not silently overwrite an explicit user choice when the host or system changes.
+
+### Required platform behavior
+
+- **Language:** detect the browser/OS locale and Telegram language signal where available; support the approved EN/FR/AR experience and RTL directionality; allow an explicit user choice; update labels, formatting and direction without duplicating domain state.
+- **Theme:** support system/default, light and dark behavior; consume Telegram theme parameters where available; use browser/OS color-scheme preference otherwise; allow an explicit user override; use semantic tokens rather than screen-specific hard-coded colors.
+- **Text size:** support system-default text sizing and an explicit accessible text-size adjustment; use rem/token-based typography and layout that reflows without clipping or hiding controls; verify modal, navigation, form, map, chat and Admin surfaces at enlarged sizes.
+- **Accessibility:** preserve keyboard/focus behavior on Web, screen-reader names/roles, visible focus, contrast, reduced-motion behavior, touch target sizing, safe areas, and truthful disabled/loading/error states. Telegram host limitations must be surfaced rather than simulated away.
+- **Host consistency:** Web and Telegram may differ in capability availability, but they must resolve the same backend identity, preference model and business state. Host-specific presentation must remain in adapters.
+- **Settings:** settings changes must have explicit loading/saved/failed states. A failed save must not appear successful. A user override must remain after reload and after switching between Web and Telegram when the same account is used.
+
+### Acceptance evidence
+
+Before S02 can reach VERIFIED, tests and staging evidence must demonstrate:
+
+- browser system locale detection and explicit language override;
+- EN/FR/AR rendering and RTL layout where applicable;
+- browser system light/dark preference and explicit theme override;
+- Telegram host theme/language signals through the host adapter, with a truthful unavailable path;
+- system-default text sizing and explicit larger text settings without clipping or inaccessible controls;
+- persistence of D02 preferences across reload and Web/Telegram sessions for the same account;
+- denial/failure handling when preference persistence is unavailable;
+- no localStorage/Firebase/Telegram host value is used as the canonical account preference;
+- no product business state is fabricated to demonstrate a preference.
+
+S01 must establish the shared preference interfaces, design tokens, host-adapter seams, and accessibility test harness without pretending to complete D02. S02 implements and verifies the real D02 preference behavior.
+
 ## 5. Milestone contract
 
 Each milestone is a complete, bounded deliverable. A milestone may be split into independently reviewable tasks, but no task may create fake business behavior or claim a domain is available before the milestone gate passes.
 
 ### S01 — Real engineering substrate
 
-**Purpose:** establish the real foundation without implementing a partial product.
+**Purpose:** establish the real foundation without implementing a partial product. Include the shared design-token system, platform-preference interfaces, Web/Telegram host-adapter seams, and accessibility test harness; do not present D02 preference persistence as complete.
 
 **Must produce:**
 
@@ -160,7 +208,7 @@ Each milestone is a complete, bounded deliverable. A milestone may be split into
 
 ### S02 — Identity, authorization, shell and host authority
 
-**Must produce:** real D01 identity/session/recovery, Telegram launch verification and canonical linking, guest/protected behavior, five equal root destinations, and permanent scoped Admin authorization shell.
+**Must produce:** real D01 identity/session/recovery, Telegram launch verification and canonical linking, guest/protected behavior, five equal root destinations, permanent scoped Admin authorization shell, and the D02 platform-preference/accessibility behavior defined in section 4A.
 
 **Acceptance:** real test identities share one backend identity across Web and Telegram; unauthorized actions fail; no UI-only privilege; no fake session/token.
 
@@ -343,7 +391,7 @@ Only record decisions with evidence or explicit Product Owner direction. Do not 
 | DEC-002 | 2026-11-01 | Gemini application is UX/interaction reference only; no blind code, backend, schema, auth, payment, or deployment adoption. | Product Owner direction; `AGENTS.md`; this plan | All | Extract/map/classify before rebuilding. | LOCKED |
 | DEC-003 | 2026-11-01 | No fake placeholders, mocks, fake backend, or partial business functionality presented as available. | Product Owner direction; `AGENTS.md` | All | Incomplete capability remains unavailable, not simulated. | LOCKED |
 | DEC-004 | 2026-11-01 | S01 establishes substrate only and completes no business domain. | `Master Plan.md`, S01 contract | S01 | First implementation authorization must name S01. | LOCKED |
-| DEC-005 | 2026-11-01 | PostgreSQL + PostGIS is intended authoritative transactional/spatial persistence; one migration authority controls installation. | `Master Plan.md`, `Database.md` | S01 onward | No client/localStorage/Firebase authority. | LOCKED |
+| DEC-005 | 2026-11-01 | PostgreSQL + PostGIS is intended authoritative transactional/spatial persistence; one migration authority controls installation. | `Master Plan.md`, `Database.md` | S01 onward | No client/localStorage/Firebase authority. | LOCKED |\n| DEC-006 | 2026-11-01 | Language, theme, text-size, accessibility and host preference behavior use D02 ownership with system/Telegram detection and explicit-user override precedence. | Product Owner direction; this plan section 4A | S01–S02, S17 | Shared tokens/adapters first; real persistence and parity evidence before S02 acceptance. | LOCKED |
 
 When adding a decision, use:
 
@@ -450,7 +498,7 @@ Do not invent a workaround.
 
 | Date | Commit | Change |
 |---|---|---|
-| 2026-11-01 | Initial publication | Created self-contained execution-control document for S01–S18, agent handoffs, evidence, decisions, surprises and Gemini reference extraction. |
+| 2026-11-01 | Initial publication | Created self-contained execution-control document for S01–S18, agent handoffs, evidence, decisions, surprises and Gemini reference extraction. |\n| 2026-11-01 | Platform preferences added | Added D02 ownership, system/Telegram precedence, language/theme/text-size/accessibility behavior and S01/S02 acceptance evidence. |
 
 Append every future plan change with date, commit SHA and semantic reason.
 
