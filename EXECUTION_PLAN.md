@@ -6,7 +6,7 @@
 
 **Architecture:** The product uses separate Client, API, and Worker runtime boundaries. The API may initially host isolated domain modules in one deployable, but no domain may become a god service, universal repository, second writer, or monolithic script. PostgreSQL + PostGIS is the intended authoritative transactional/spatial platform; migrations, readiness, exact serving identity, and isolated staging are release requirements.
 
-**Tech Stack:** Select exact libraries and providers during the authorized slice from the approved architecture and current repository evidence. PostgreSQL + PostGIS is directed. Web and Telegram are one product; Telegram is a host adapter. Do not copy technology choices from historical VibeQuest, Hooma, Railway references, or Gemini files without a separate approved decision.
+**Tech Stack:** PostgreSQL + PostGIS are directed. No agent may select or add an exact library, provider, package manager, runtime version, CI/CD system, verification environment, or deployment platform from preference, tool availability, or historical material. The Product Owner must explicitly approve each exact choice before it enters the repository; an agent may recommend and document evidence, but may not make the choice. Web and Telegram are one product; Telegram is a host adapter.
 
 **Spec:** `Master Plan.md`, `Requirements.md`, `structure.md`, `Database.md`, and `AGENTS.md`.
 
