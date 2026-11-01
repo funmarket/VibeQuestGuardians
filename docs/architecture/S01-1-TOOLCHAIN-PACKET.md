@@ -110,7 +110,7 @@ No command may be weakened, renamed, or skipped to obtain a green result.
 
 ## Stop conditions
 
-- The current branch diverges from the base state before mutation.
+- The branch has an unexpected commit after this packet's commit; re-inspect the current tree and reconcile before any configuration mutation.
 - A dependency cannot be resolved through npm with the approved policy.
 - A real package-lock.json cannot be generated and verified.
 - Any requested change reaches source, database, CI, Railway, or product behavior.
