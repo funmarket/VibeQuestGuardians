@@ -12,6 +12,12 @@ This file is the repository’s durable agent guidance. Read it before acting. I
 
 Document approval does not prove implementation, database state, staging acceptance, deployment, or production acceptance.
 
+## 1A. Turn repeatable workflows into skills
+
+When a VibeQuest workflow becomes repeatable, package the method instead of expanding this file. The shared project skill [VibeQ](.agents/skills/vibeq/SKILL.md) covers source-grounded planning, implementation boundaries, semantic audits, UX-reference mapping, acceptance evidence and handoffs. Load it for those workflows.
+
+Keep this file short and durable. Keep milestone/task detail in EXECUTION_PLAN.md and task-specific procedures in focused skills.
+
 ## 2. Required reading order
 
 Before making a project-specific claim or change:
