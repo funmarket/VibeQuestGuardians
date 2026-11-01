@@ -114,7 +114,7 @@ This means:
 - Staging has not been accepted merely because documents exist.
 - Production has not been accepted merely because documents exist.
 
-Document approval does not authorize arbitrary execution:
+The canonical agent continuation contract is [`EXECUTION_PLAN.md`](EXECUTION_PLAN.md). New agents must read it after this file and before selecting work. It records the phase sequence, no-mock/no-placeholder rules, authorization contract, acceptance evidence, handoff protocol and stop conditions.\n\nDocument approval does not authorize arbitrary execution:
 
 - document approval ≠ repository mutation authority
 - document approval ≠ database mutation authority
@@ -219,18 +219,21 @@ Read-only UI, search, analytics, dashboards, and projections are not second writ
 
 ## 7. Architecture invariants
 
-The approved target architecture is a **modular monolith with explicit domain boundaries**, separately runnable asynchronous worker(s), and one shared responsive Web/Telegram client.
+The approved target is a clean domain-oriented system with separate application/runtime boundaries:
 
-Preserve:
+- `apps/client`: one responsive Web client plus Telegram Mini App host adaptation; no direct database access or business authority.
+- `apps/api`: synchronous authenticated HTTP/realtime boundary composed from explicit owner-domain modules, capability ports, commands, queries and authorized projections.
+- `apps/worker`: separately runnable durable asynchronous runtime for outbox delivery, retries, deadlines, cleanup, media processing, projections and explicitly owned jobs.
+- PostgreSQL + PostGIS: authoritative transactional/spatial persistence.
+- Object storage and external providers: replaceable adapters behind explicit ownership contracts.
 
-- one canonical backend authority
-- one canonical identity/data model
-- PostgreSQL + PostGIS as the intended authoritative transactional/spatial platform
-- explicit module boundaries and one-writer ownership
-- durable worker/outbox/scheduling patterns where required
-- real device permission/capability handling
-- no monolithic legacy screen/service/controller recreation
-- no fake business state to simulate progress
+This is **not** a monolithic script, god service, universal repository, universal controller, universal schema owner, or second business writer. The API may initially host multiple isolated domain modules in one deployable, but every D01–D28 domain retains its own ownership, canonical writer, interfaces, persistence adapters and tests. The logical domains are not a requirement for 28 microservices, databases or deployments.
+
+Composition roots may wire concrete implementations. Domain modules may use narrow capability ports, but may not import foreign infrastructure or write foreign canonical records. Admin Control Room is a privileged orchestration surface, not D29 and not a direct-SQL writer.
+
+One designated release/pre-deploy migration authority runs migrations once per target database. API and Worker replicas must not race to migrate. Applied migration checksums, required extensions, readiness and actual serving revision must be verified separately.
+
+Every deployable must expose separate liveness and dependency-aware readiness, together with exact repository/ref/commit, build artifact, serving revision and environment identity. Staging must be isolated, persistent and production-shaped; staging acceptance never substitutes for production acceptance.
 
 ### Web + Telegram
 
@@ -253,8 +256,6 @@ Location, camera, and microphone are independent reusable platform capabilities.
 - granted/denied/blocked/unavailable/revoked states where observable
 
 An in-app permission dialog cannot pretend to grant OS/device access.
-
----
 
 ## 8. Root navigation and product composition
 
