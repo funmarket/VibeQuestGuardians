@@ -184,6 +184,14 @@ Each milestone is a complete, bounded deliverable. A milestone may be split into
 - The source substrate includes Client/API/Worker boundaries, shared contracts, runtime-health, isolated-test helper, PostGIS migration authority, readiness endpoints, and host-preference seams.
 - S01 is not `VERIFIED` or staging-accepted: no staging environment has been installed or exercised, and the current format gate does not yet cover all source files.
 
+
+**S01 hardening update — 2026-11-01**
+
+- Readiness now requires a non-empty PostGIS result and a non-empty migration ledger, covered by a red-green CI test cycle.
+- Migration status no longer exits before advisory-lock release, client release, and pool shutdown.
+- CI now runs `db:validate`, `db:migrate`, and `db:status` before the full check.
+- S01 remains `IMPLEMENTED`, not `VERIFIED`: full-source formatting is still not enforced, and staging has not been installed or accepted.
+
 ### S01 — Real engineering substrate
 
 **Purpose:** establish the real foundation without implementing a partial product. Include the shared design-token system, platform-preference interfaces, Web/Telegram host-adapter seams, and accessibility test harness; do not present D02 preference persistence as complete.
