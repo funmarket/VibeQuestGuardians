@@ -942,7 +942,7 @@ Implementation commit: `df2fe90a5ed04a76017e6b587b184b1085f81526`.
 | Liveness | Browser check of `https://staging-api-staging-dc86.up.railway.app/health/live` returned `{"status":"alive"}` | VERIFIED | None |
 | Readiness | Browser check of `/health/ready` returned `{"status":"ready"}` with the exact identity above | VERIFIED | None |
 | Unauthenticated session boundary | Browser check of `/me` returned safe `401 AUTHORIZATION_ERROR` with `Authorization required` | VERIFIED | Only the no-credential negative path was exercised |
-| Valid session, expiry, revoke, duplicate revoke, cleanup | No staging PostgreSQL TCP proxy or Railway SQL/query tool is available; no disposable staging fixture was created | BLOCKED | Do not expose the database or insert ad hoc data without an approved safe access path |
+| Valid session, expiry, revoke, duplicate revoke, cleanup | A temporary TCP proxy was provisioned on the existing `staging-postgis` service at `reseau.proxy.rlwy.net:43012`, but Railway credentials were unavailable to the connector and the local Railway CLI was not authenticated; no disposable staging fixture was created | BLOCKED | The proxy was removed immediately; no public staging database endpoint remains |
 | Service status | Environment status: `staging-api`, `staging-worker`, `staging-client`, and `staging-postgis` online; active staging API deployment `4e0e6f0b-bb48-421b-ab98-df96a1121864` successful | VERIFIED | Railway still reports 9 historical recent failures across API/client/worker; no active failure remained |
 | Secrets/log safety | Railway variable names were inspected with values redacted; deploy logs showed no database URL, token, or raw session credential | VERIFIED | No raw secret was printed or committed |
 
@@ -954,6 +954,8 @@ The first metadata-only staging patch set `VQ_COMMIT` to the abbreviated value `
 - `VQ_BUILD=s02-2-staging-bb0ec37`
 
 The corrective deployment completed successfully as `4e0e6f0b-bb48-421b-ab98-df96a1121864`. This was an in-scope staging correction; no production variable or deployment was touched.
+
+A temporary TCP proxy was then created only on the existing staging PostGIS service to enable the requested disposable-fixture proof. It became active at `reseau.proxy.rlwy.net:43012`, but the Railway connector intentionally redacted database credentials and the local Railway CLI returned `Unauthorized` because it was not logged in. The proxy was removed immediately and a follow-up list confirmed no TCP proxies remain on `staging-postgis`. No database connection, fixture insertion, schema change, or production access occurred.
 
 ### Acceptance status
 
