@@ -280,3 +280,51 @@ Use the Master Plan vocabulary only:
 `PLANNED`, `READY`, `IN PROGRESS`, `IMPLEMENTED`, `VERIFIED`, `STAGING ACCEPTED`, `PRODUCTION ACCEPTED`, `BLOCKED`.
 
 A green build, route, migration file, screen, or deployment record is not acceptance by itself.
+
+
+
+## Current Runtime and Integration Reconciliation — 2026-11-02
+
+This section supersedes earlier statements that staging has no installed runtime evidence. It records the current verified topology and the boundary for the remaining integrations.
+
+### Verified current runtime topology
+
+The current branch `vibefoundation` at HEAD `f985dc9a180b6fddd23b0c508250844701512b9b` contains three independently deployable runtime boundaries:
+
+- **Client:** `apps/client`; Web client only, no direct database authority. It is deployed as `staging-client` and serves the current foundation shell.
+- **API:** `apps/api`; synchronous HTTP boundary. It owns readiness and exact runtime identity checks and is deployed as `staging-api`.
+- **Worker:** `apps/worker`; asynchronous runtime boundary. It is deployed as `staging-worker`; full business-job behavior is not yet implemented.
+
+The staging API and Worker use the same private PostGIS target for infrastructure verification, but the API migration runner is the sole migration authority. The Client never receives database credentials.
+
+### Current Railway evidence
+
+Project `VibeQuest`, staging environment, currently has `staging-postgis`, `staging-api`, `staging-worker`, and `staging-client`. All four latest deployments are successful. API live/ready/identity endpoints were verified over the public staging domain; readiness returned the staging identity, exact commit, PostGIS evidence, and migration-ledger count. Production contains only the existing Postgres service and was not changed.
+
+### Integration boundary matrix
+
+| Capability | Canonical owner | Runtime boundary | Current state | Required before integration acceptance |
+|---|---|---|---|---|
+| PostgreSQL/PostGIS | API/domain persistence | API + migration authority | Verified in staging | Migration safety, readiness, connection cleanup, spatial evidence |
+| Redis | No business owner; platform adapter only | Worker/API as explicitly authorized | Not present in VibeQuest | Queue/cache/lease contract, idempotency, retry, TTL, shutdown, dependency-failure tests |
+| Telegram | D01 host adapter | Client host adapter + API command boundary | Not present in VibeQuest | Authenticated init/update verification, replay/idempotency, webhook or polling choice, truthful failure behavior |
+| Media | D13 media capability | API authorization + object storage; Client upload/download adapter | Not present in VibeQuest | Metadata owner, signed access, MIME/size/integrity checks, retention, orphan cleanup, provider failure tests |
+| Web app | Client boundary | Client service | Verified foundation only | Product routes and authenticated behavior are later milestones |
+
+### Non-negotiable integration rules
+
+1. A Railway service name, environment variable, or successful container is not proof of application connectivity.
+2. Redis must never become a second canonical store for users, places, check-ins, VQ, payments, or moderation state.
+3. Telegram must call the same authorized application commands as Web; it must not write domain tables directly.
+4. Media object keys are not business identity. PostgreSQL stores ownership, purpose, status, retention, and integrity metadata.
+5. All service references must be staging-scoped and private where possible. Secrets must be Railway secrets or an approved secret manager; never commit them or place them in documentation.
+6. Each integration needs an actual runtime failure test: unavailable provider, timeout, duplicate request, retry, shutdown, and cleanup.
+7. The Client may hold upload drafts or cached preferences, but never authoritative media ownership or business state.
+
+### Hooma reference interpretation
+
+Hooma demonstrates a useful deployment shape—Web, Worker, Redis, Telegram-named service, Postgres, and a media bucket—but its Telegram deployment is verified as a legacy redirect, not a Telegram backend. Hooma is therefore a topology reference only. VibeQuest must derive contracts from D01/D13 and its own source, not copy Hooma variables or service names.
+
+### Reconciliation status
+
+The document's earlier S01 baseline remains historical. Current S01 substrate is **IMPLEMENTED and partially VERIFIED at staging runtime**. Redis, Telegram, and media remain **PLANNED** until their source contracts, consumers, tests, and live staging evidence exist. This is the stop condition that prevents disconnected infrastructure from being mistaken for a connected product.
