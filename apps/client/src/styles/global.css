@@ -1,0 +1,118 @@
+:root {
+  background: var(--vq-color-canvas);
+  color: var(--vq-color-text);
+  font-family: var(--vq-font-body);
+  font-size: var(--vq-font-size-body);
+  line-height: var(--vq-line-height-body);
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 18rem;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--vq-color-canvas);
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  outline: 0.2rem solid var(--vq-color-focus);
+  outline-offset: 0.25rem;
+}
+
+.foundation-shell {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: var(--vq-space-3);
+}
+
+.foundation-panel {
+  width: min(100%, var(--vq-content-max));
+  padding: clamp(1.5rem, 5vw, 4rem);
+  border: 1px solid var(--vq-color-border);
+  border-radius: var(--vq-radius-panel);
+  background: var(--vq-color-surface);
+}
+
+.foundation-kicker {
+  margin: 0 0 var(--vq-space-1);
+  color: var(--vq-color-accent);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--vq-font-size-heading);
+  line-height: 1.05;
+}
+
+.foundation-copy {
+  max-width: 42rem;
+  margin: var(--vq-space-3) 0;
+  color: var(--vq-color-muted);
+}
+
+.foundation-button {
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--vq-color-accent);
+  border-radius: 999px;
+  color: var(--vq-color-canvas);
+  background: var(--vq-color-accent);
+  cursor: pointer;
+}
+
+.foundation-details {
+  margin-top: var(--vq-space-3);
+  padding-top: var(--vq-space-2);
+  border-top: 1px solid var(--vq-color-border);
+}
+
+dl {
+  display: grid;
+  gap: var(--vq-space-2);
+  margin: 0;
+}
+
+dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--vq-space-2);
+}
+
+dt {
+  color: var(--vq-color-muted);
+}
+
+dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+@media (max-width: 30rem) {
+  .foundation-shell {
+    align-items: start;
+    padding: var(--vq-space-2);
+  }
+
+  .foundation-panel {
+    margin-top: var(--vq-space-2);
+  }
+
+  dl div {
+    align-items: start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}

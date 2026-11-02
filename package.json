@@ -16,15 +16,20 @@
   "scripts": {
     "test": "tsx --test packages/testing/src/*.test.ts",
     "typecheck": "tsc --noEmit -p packages/testing/tsconfig.json",
-    "build": "npm run typecheck",
-    "format:check": "prettier --check package.json eslint.config.js tsconfig.base.json apps/api/package.json apps/api/tsconfig.json apps/api/src apps/client/package.json apps/client/tsconfig.json apps/client/vite.config.ts apps/worker/package.json apps/worker/tsconfig.json apps/worker/src packages/contracts/package.json packages/contracts/tsconfig.json packages/contracts/src packages/testing/package.json packages/testing/tsconfig.json packages/testing/src",
+    "typecheck:client": "tsc --noEmit -p apps/client/tsconfig.json",
+    "build": "npm run typecheck && npm run typecheck:client && npm run build:client",
+    "build:client": "npm run build --workspace @vibequest/client",
+    "format:check": "prettier --check package.json eslint.config.js tsconfig.base.json apps/api/package.json apps/api/tsconfig.json apps/api/src apps/client/package.json apps/client/tsconfig.json apps/client/vite.config.ts apps/client/index.html apps/client/src apps/worker/package.json apps/worker/tsconfig.json apps/worker/src packages/contracts/package.json packages/contracts/tsconfig.json packages/contracts/src packages/testing/package.json packages/testing/tsconfig.json packages/testing/src",
     "lint:config": "eslint eslint.config.js"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
     "@types/node": "^24.10.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "eslint": "^10.14.0",
+    "playwright": "^1.56.1",
     "prettier": "^3.9.10",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
