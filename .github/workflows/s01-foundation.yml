@@ -66,9 +66,8 @@ jobs:
 
       - name: Run isolated Postgres/PostGIS integration tests
         env:
-          VQ_DATABASE_URL: postgresql://vq_ci:vq_ci_password@127.0.0.1:5432/vibequest_ci
-          VQ_DATABASE_TARGET: vibequest_ci
-          VQ_DATABASE_APPROVED_TARGET: vibequest_ci
-          VQ_DATABASE_CONNECT_TIMEOUT_MS: '5000'
+          VQ_TEST_DATABASE_URL: postgresql://vq_ci:vq_ci_password@127.0.0.1:5432/vibequest_ci
+          VQ_TEST_DATABASE_TARGET: vibequest_ci
           VQ_TEST_DATABASE_NO_POSTGIS_URL: postgresql://vq_ci:vq_ci_password@127.0.0.1:5432/postgres
+          VQ_TEST_DATABASE_NO_POSTGIS_TARGET: postgres
         run: npm run test:database
