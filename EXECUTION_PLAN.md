@@ -766,3 +766,153 @@ The shell `npm`/`npx` launchers resolve to a missing global npm installation in 
 ### Acceptance result
 
 S02-1 is **IMPLEMENTED and VERIFIED for the contract-only slice** in the disposable checkout. The implementation adds no runtime identity provider, database writer, Redis consumer, media adapter, Telegram deployment, or frontend behavior. Staging and production remain unchanged. The branch must be pushed only after the final diff review and commit records this evidence.
+
+## S02-2 pre-implementation packet and blocker — 2026-11-02
+
+### Authorized slice
+
+Implement one database-backed D01 API session boundary consuming the S02-1 identity contracts. The bounded outcome includes server-validated session lookup, expiry/revocation enforcement, current-user resolution, safe HTTP error responses, HTTP-level acceptance tests, and migration safety tests only if a migration is required.
+
+### Authorized targets
+
+- Repository: `funmarket/VibeQuestGuardians`
+- Branch: `vibefoundation`
+- Preflight HEAD: local checkout reports commit `0f19df5` (full SHA must be re-read before any future execution)
+- Local test database requested by Product Owner: `vibequest_m1_test`
+
+No source files were authorized or changed by this preflight. Any future implementation packet must name the exact API, contract, migration, and testing files after database/configuration inspection.
+
+### Owner and canonical writer
+
+- Domain owner: D01 Identity and Authorization.
+- Canonical writer: the D01 database-backed identity/session application boundary.
+- PostgreSQL/PostGIS remains authoritative. No Redis, browser storage, Telegram service, or in-memory session authority may be introduced.
+
+### Required contract and failure semantics
+
+- Resolve the S02-1 canonical principal only from a server-validated session.
+- Reject missing, malformed, unknown, expired, and revoked sessions.
+- Return safe versioned error envelopes without exposing tokens, credentials, init data, connection strings, or stack traces.
+- Preserve Web/Telegram convergence without deploying Telegram.
+- Repeated revoke must be idempotent.
+- Database failure must return a truthful dependency failure, never HTTP success.
+
+### Required acceptance and verification
+
+- Actual HTTP boundary tests for every session outcome, current-user secrecy, cross-session mismatch, revoke idempotency, request cleanup, shutdown, and dependency failure.
+- If schema changes are required: first apply, rerun, checksum rejection, advisory-lock release, lock contention, rollback, client/pool release, and early-exit cleanup tests.
+- Full repository tests, typechecks, build, formatting, config lint, and diff review.
+
+### Preflight evidence and blocker
+
+- `Get-Service postgresql-x64-18` reports the local PostgreSQL service as `Running`.
+- No `VQ_TEST_DATABASE_URL`, `VQ_TEST_DATABASE_TARGET`, or equivalent database credentials are configured in the checkout/environment.
+- An unauthenticated probe to `postgresql://postgres@127.0.0.1:5432/vibequest_m1_test` failed with `client password must be a string`; no password was guessed or persisted.
+- Because the authorized task requires real PostgreSQL-backed behavior and forbids mock/in-memory authority, implementation cannot safely begin without a configured connection to `vibequest_m1_test`.
+
+### Status
+
+`BLOCKED — database connectivity/configuration unavailable before implementation.` No production source, migration, Railway resource, staging variable, or production resource was changed. No commit or push was performed for S02-2.
+
+### Resume condition
+
+Resume only after the user provides or configures the approved local test-database connection through the repository’s expected `VQ_TEST_DATABASE_URL` and `VQ_TEST_DATABASE_TARGET` mechanism, with credentials kept outside source control. Re-read the current HEAD and create a fresh implementation packet before editing source.
+
+### Follow-up preflight result — database reachable, ownership conflict remains
+
+- The approved connection authenticated successfully to `vibequest_m1_test` as `vibequest_app`; PostGIS is installed.
+- Read-only catalog inspection found existing public tables `vq_users`, `vq_sessions`, `vq_check_ins`, `vq_places`, `vq_vq_accounts`, `vq_vq_ledger_entries`, and `vq_vq_reward_rules`.
+- The database uses a separate `vq_migration_ledger` with prior identity-related migration records, including `002_identity-vq`; the current checkout owns `vq_platform_migration_ledger` and only declares `0001_postgis_extension`.
+- The existing identity/session schema and migration history are not represented in the current GitHub source or current migration authority. The user previously identified this database as shared with another local project.
+- No write, migration, fixture insertion, session creation, or schema change was performed during this retry.
+
+`STOPPED_ON_DRIFT — the database is reachable, but its existing identity/session tables and migration authority are not owned or declared by the current checkout. S02-2 cannot safely consume or modify them without a new explicit ownership/schema decision. Source files, Railway, staging, and production remain unchanged; no S02-2 commit or push was made.`
+
+## S02-2 resumed implementation packet — 2026-11-02
+
+### Authorization and checkpoint
+
+- User authorized continuation after the isolated database was created.
+- Repository: `funmarket/VibeQuestGuardians`
+- Branch: `vibefoundation`
+- Current HEAD before source mutation: `0f19df591a0cf53aa30956eba296f91f3b4c9137`
+- Database target: `vibequest_s02_2_test`, owned by `vibequest_app`, isolated from `vibequest_m1_test`.
+- PostGIS bootstrap was executed successfully in the isolated target.
+
+### Bounded semantic outcome
+
+Implement only the D01 database-backed API session boundary:
+
+- `GET /me` resolves the canonical principal from a server-validated bearer session;
+- `POST /sessions/revoke` revokes the authenticated session idempotently;
+- missing, malformed, unknown, expired, revoked, mismatched, and database-failure cases return safe typed HTTP errors;
+- session secrets are hashed at rest and never returned;
+- API shutdown closes the session database pool;
+- one additive D01 migration creates the minimum user/session tables and indexes.
+
+### Exact files authorized
+
+- `EXECUTION_PLAN.md`
+- `package.json`
+- `apps/api/src/app.ts`
+- `apps/api/src/database/migrator.ts`
+- `apps/api/src/identity/session.ts`
+- `packages/testing/src/identity-session.test.ts`
+
+No other source, frontend, deployment, Railway, provider, Redis, media, Telegram, or production files may change.
+
+### Owner and database boundary
+
+- Owner: D01 Identity and Authorization.
+- Canonical writer: the D01 PostgreSQL session boundary only.
+- Physical tables must use explicit D01 names (`vq_d01_users`, `vq_d01_sessions`) to avoid adopting the unrelated shared database schema.
+- PostgreSQL/PostGIS is authoritative; no browser, Redis, or in-memory session authority is permitted.
+
+### Required contracts and failure semantics
+
+- Bearer token is accepted only from the `Authorization` header.
+- Store only a SHA-256 token hash; never log or return the raw token.
+- Valid sessions resolve the S02-1 canonical principal shape with `host`, `sessionId`, `accountId`, and capabilities.
+- Missing/malformed/unknown credentials return `401` with the existing safe error envelope.
+- Expired and revoked sessions return `401` with no identity disclosure.
+- Revoke is idempotent for the authenticated session and never revokes another session.
+- Database failures return `503` dependency errors, never a success response.
+- Pool/client release and HTTP server shutdown are explicitly tested.
+
+### Test-first and migration acceptance
+
+Write and run the real HTTP tests before production implementation. The tests must cover missing, malformed, unknown, valid, expired, revoked, mismatch, secret non-disclosure, idempotent revoke, database failure, request cleanup, and shutdown. The migration must be tested for first application, rerun, checksum rejection, advisory-lock release, rollback, and pool/client cleanup using the isolated target.
+
+### Verification and stop conditions
+
+Use Node 24 and the configured isolated database. Run focused RED, focused GREEN, database safety checks, full tests, typechecks, build, formatting, config lint, diff review, and final clean-tree review. Stop if the work requires a new owner, a second schema authority, any unrelated file, a shared database mutation, or any Railway/production change.
+
+## S02-2 execution evidence — pre-commit
+
+### Test-first evidence
+
+| Stage | Command | Result |
+|---|---|---|
+| RED | `tsx --test packages/testing/src/identity-session.test.ts` before `apps/api/src/identity/session.ts` existed | Genuine `ERR_MODULE_NOT_FOUND` for the authorized session boundary; exit 1 |
+| Focused GREEN | `tsx --test packages/testing/src/identity-session.test.ts` with `VQ_TEST_DATABASE_URL` targeting `vibequest_s02_2_test` | 8 passed, 0 failed |
+| Full suite | `C:\Program Files\nodejs\npm.cmd test` with isolated DB variables | 36 passed, 0 failed |
+| Migration safety subset | `tsx --test --test-name-pattern='database configuration|unavailable database|duplicate and out-of-order|migration authority|modified applied|failed migrations' packages/testing/src/database-foundation.test.ts` | 8 passed, 0 failed |
+| Typecheck | `C:\Program Files\nodejs\npm.cmd run typecheck` | Passed |
+| Client typecheck | `C:\Program Files\nodejs\npm.cmd run typecheck:client` | Passed |
+| Build | `C:\Program Files\nodejs\npm.cmd run build` | Client, API, and Worker builds passed |
+| Formatting | `C:\Program Files\nodejs\npm.cmd run format:check` | Passed |
+| Config lint | `C:\Program Files\nodejs\npm.cmd run lint:config` | Passed |
+| Diff hygiene | `git diff --check` | Passed |
+
+### Database evidence
+
+- `vibequest_s02_2_test` authenticated successfully as `vibequest_app` and reported PostGIS available.
+- `CREATE EXTENSION IF NOT EXISTS postgis` returned successfully before migration execution.
+- The current checkout’s `0002_d01_identity_sessions` migration created `vq_d01_users` and `vq_d01_sessions` in the isolated target.
+- Migration rerun, checksum rejection, lock serialization, rollback, and cleanup checks passed in the migration subset.
+- The existing `missing PostGIS` test was not included in the subset because no separate non-PostGIS database is configured; the full database file reports that environment limitation. No non-PostGIS database was created or modified.
+- Migration probe rows created by the safety suite were removed only from the isolated `vibequest_s02_2_test` ledger after verification. No shared `vibequest_m1_test` rows were touched.
+
+### Scope result
+
+The authorized S02-2 slice is **IMPLEMENTED and VERIFIED locally** before commit: database-backed `/me`, idempotent session revoke, safe failure envelopes, token hashing/non-disclosure, expiry/revocation handling, and API shutdown cleanup. No Telegram deployment, Redis, media, frontend, Railway, staging, or production mutation occurred. Final source/diff review and commit/push remain.

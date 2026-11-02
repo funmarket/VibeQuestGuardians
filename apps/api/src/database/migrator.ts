@@ -37,6 +37,31 @@ export const defaultMigrations: MigrationDefinition[] = [
     version: '0001_postgis_extension',
     sql: 'CREATE EXTENSION IF NOT EXISTS postgis',
   },
+  {
+    version: '0002_d01_identity_sessions',
+    sql: `
+      CREATE TABLE IF NOT EXISTS vq_d01_users (
+        id uuid PRIMARY KEY,
+        account_id text NOT NULL UNIQUE,
+        created_at timestamptz NOT NULL DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS vq_d01_sessions (
+        id uuid PRIMARY KEY,
+        user_id uuid NOT NULL REFERENCES vq_d01_users(id) ON DELETE CASCADE,
+        token_hash text NOT NULL UNIQUE,
+        host text NOT NULL CHECK (host IN ('web', 'telegram')),
+        capabilities text[] NOT NULL DEFAULT '{}'::text[],
+        expires_at timestamptz NOT NULL,
+        revoked_at timestamptz,
+        created_at timestamptz NOT NULL DEFAULT now()
+      );
+
+      CREATE INDEX IF NOT EXISTS vq_d01_sessions_active_lookup
+        ON vq_d01_sessions (token_hash, expires_at)
+       WHERE revoked_at IS NULL;
+    `,
+  },
 ];
 
 function checksum(sql: string): string {
