@@ -960,3 +960,24 @@ A temporary TCP proxy was then created only on the existing staging PostGIS serv
 ### Acceptance status
 
 S02-2 is **STAGING PARTIALLY VERIFIED**, not `STAGING ACCEPTED`. The source deployment, migration log, exact runtime identity, liveness, readiness, and unauthenticated HTTP authorization failure are verified. Valid-session resolution, expiry/revocation, idempotent revoke, fixture cleanup, and shutdown evidence remain blocked until a safe staging database access path is explicitly available. The next action is to provide a controlled staging-only database query path or an approved temporary access mechanism; do not mark S02-2 staging accepted before those checks pass.
+
+## S02-2 staging-closure retry — 2026-11-03
+
+The existing Railway target was re-reconciled before retry:
+
+- Project `6aed68eb-cb62-4d2e-8606-900b57b6c389`, environment `fd6553dc-5a72-4b28-b0ae-ad1d938dd468`, and all four named staging services matched the packet.
+- Active staging API deployment remained `4e0e6f0b-bb48-421b-ab98-df96a1121864` (`SUCCESS`); no staged changes were pending.
+- The local checkout was clean on `vibefoundation` at documentation HEAD `9e56c50`; the deployed application source remains the required `bb0ec37a4435995e9eec408adfd2cec631f38dbd`.
+
+### Access attempt and safety result
+
+- A temporary TCP proxy was created only for the existing `staging-postgis` on port `5432`, first as `nozomi.proxy.rlwy.net:40625`.
+- The local network sandbox rejected the connection before SQL execution (`EACCES`); no fixture was created.
+- The Railway API service console was inspected. It had no `node`, `psql`, `curl`, or `wget` executable available; the submitted console probes therefore executed no SQL or HTTP checks.
+- A protected local retry path was rejected before execution because the tool would record a live database credential in terminal input. No credential was written to a file or committed.
+- The temporary TCP proxy was removed immediately, and a follow-up Railway listing confirmed: `No TCP proxies for staging-postgis in environment staging.`
+- The temporary probe script was deleted. The local process that held the connection value in memory was closed.
+
+### Retry status
+
+This retry remains **BLOCKED**, not `STAGING ACCEPTED`. No valid-session, expiry, revoke, duplicate-revoke, or staging-fixture-cleanup proof was obtained. No database mutation occurred during the retry, and no production resource was touched. Completion requires a safe database access path that does not expose credentials in command arguments, terminal input, logs, or committed files.
