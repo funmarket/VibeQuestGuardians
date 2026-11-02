@@ -9,7 +9,7 @@
 
 ## Approved technical direction
 
-- Node.js 22 and npm workspaces with a committed npm lockfile.
+- Node.js 24 and npm workspaces with a committed npm lockfile.
 - TypeScript native ESM.
 - React, Vite, and React Router for the Client boundary.
 - Express with an explicit composition root for the API boundary.
