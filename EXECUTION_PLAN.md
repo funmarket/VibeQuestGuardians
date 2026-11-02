@@ -592,3 +592,47 @@ Before accepting any edit to this plan, verify:
 - [ ] the final commit SHA is recorded.
 
 **Project completion condition:** the project is complete only when the Master Plan S18 production-readiness contract is directly evidenced. This plan never authorizes implementation, deployment, migration, release, or production mutation by itself.
+
+
+
+## Current-state reconciliation and S02-1 handoff — 2026-11-02
+
+This section supersedes earlier current-state entries that say S01 has no API/Worker runtime, physical database, migrations, or staging evidence. Those entries are historical baseline records; the current verified state is below.
+
+### Exact checkpoint
+
+- Repository: `funmarket/VibeQuestGuardians`
+- Branch: `vibefoundation`
+- Documentation checkpoint before this reconciliation: `70b1c1f35747d0cea08ab378e055be12655f6cf3`
+- Runtime source commit: `9d91ec12488e1741c9cd637b308e5c94dcfa4d1f`
+- Client correction commit: `f985dc9a180b6fddd23b0c508250844701512b9b`
+- Railway project: `VibeQuest` / `6aed68eb-cb62-4d2e-8606-900b57b6c389`
+- Railway staging environment: `staging` / `fd6553dc-5a72-4b28-b0ae-ad1d938dd468`
+
+### Evidence ledger
+
+| Acceptance item | Evidence | Result | Limitation |
+|---|---|---|---|
+| Persistent PostgreSQL/PostGIS staging | Railway `staging-postgis` deployment and persistent volume | VERIFIED | Business schema remains bounded to the implemented foundation |
+| Migration authority and ledger | API pre-deploy migration log: target `vibequest_staging`, PostGIS `3.5.2`, ledger count `1` | VERIFIED | Full S01 migration safety matrix remains required before S01 final acceptance |
+| API HTTP runtime | Railway API deployment plus live `/health/live`, `/health/ready`, and `/health/identity` checks | VERIFIED | Business endpoints are not implemented by S01 |
+| Worker runtime | Successful Railway Worker deployment and health evidence | VERIFIED | Full business-job and shutdown acceptance remains required |
+| Client runtime | Successful Railway Client deployment and live foundation page | VERIFIED | Product routes/authenticated behavior remain future milestones |
+| Production isolation | Production environment still contains only existing Postgres | VERIFIED | Production application acceptance has not begun |
+| Redis | No VibeQuest Redis service or consumer in current source | NOT IMPLEMENTED | Must wait for a real queue/cache/lease contract and tests |
+| Telegram | No VibeQuest Telegram adapter/runtime in current source | NOT IMPLEMENTED | S02 host contract is next; no bot deployment is authorized |
+| Media | No VibeQuest object-storage adapter or media runtime in current source | NOT IMPLEMENTED | S03/D13 contract is required before provisioning as integrated |
+
+### Reconciled S01 status
+
+S01 is **IMPLEMENTED and partially VERIFIED at staging runtime** for the PostgreSQL/PostGIS, API, Worker, and Client substrate. S01 is not **PRODUCTION ACCEPTED**. The project must not claim that Redis, Telegram, media, business domains, or authenticated product behavior are complete.
+
+### Next authorized slice: S02-1
+
+The next bounded slice is D01 Identity and Web/Telegram Host Contract Foundation. It may define and test canonical principals, Web host context, Telegram host context, session/revocation boundaries, and fail-closed verification semantics. It must not add Redis, media storage, Telegram deployment, provider credentials, production resources, or business-domain behavior.
+
+Before S02-1 source changes, the agent must record its implementation packet, write and run red acceptance tests, implement the smallest source change, run focused and full checks, and update this evidence ledger at the resulting branch HEAD.
+
+### Documentation and infrastructure rule
+
+A Railway service, environment variable, successful container, or provider deployment is not application integration evidence. Redis, media, and Telegram may only move from PLANNED to IMPLEMENTED after the owning source contract, actual consumer, secrets/reference wiring, negative tests, cleanup/shutdown behavior, and live staging verification all exist.
