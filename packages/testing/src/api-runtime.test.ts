@@ -92,3 +92,34 @@ test('API readiness rejects invalid configuration while liveness remains availab
     },
   );
 });
+
+test('API readiness rejects an unavailable configured database', async () => {
+  const module = await loadApiModule();
+  assert.ok(module, 'API app module must exist');
+  const createApiApp = module.createApiApp as (options?: unknown) => {
+    listen: (port: number) => Server;
+  };
+  await withServer(
+    createApiApp({
+      env: {
+        VQ_REPOSITORY: 'funmarket/VibeQuestGuardians',
+        VQ_REF: 'vibefoundation',
+        VQ_COMMIT: 'a'.repeat(40),
+        VQ_BUILD: 'build-001',
+        VQ_SERVING_REVISION: 'revision-001',
+        VQ_ENVIRONMENT: 'staging',
+        VQ_DATABASE_URL:
+          'postgresql://vq_staging@127.0.0.1:1/vibequest_staging',
+        VQ_DATABASE_TARGET: 'vibequest_staging',
+        VQ_DATABASE_APPROVED_TARGET: 'vibequest_staging',
+        VQ_DATABASE_CONNECT_TIMEOUT_MS: '100',
+      },
+    }),
+    async (baseUrl) => {
+      const live = await fetch(`${baseUrl}/health/live`);
+      const ready = await fetch(`${baseUrl}/health/ready`);
+      assert.equal(live.status, 200);
+      assert.equal(ready.status, 503);
+    },
+  );
+});

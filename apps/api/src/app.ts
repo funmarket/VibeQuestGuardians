@@ -2,11 +2,35 @@ import express, { type Express } from 'express';
 import type { Server } from 'node:http';
 import { errorResponse } from '../../../packages/contracts/src/error-envelope.js';
 import { parseApiConfig, type ApiConfig } from './config.js';
+import { parseDatabaseConfig } from './database/config.js';
+import { verifyMigrationReadiness } from './database/migrator.js';
 import { checkApiReadiness, type ApiDependencyCheck } from './health.js';
 
 export interface ApiAppOptions {
   env?: NodeJS.ProcessEnv;
   dependencies?: ApiDependencyCheck;
+}
+
+function createDefaultDependencies(env: NodeJS.ProcessEnv): ApiDependencyCheck {
+  if (!env.VQ_DATABASE_URL) {
+    return { check: async () => true };
+  }
+
+  try {
+    const databaseConfig = parseDatabaseConfig(env);
+    return {
+      check: async () => {
+        try {
+          await verifyMigrationReadiness(databaseConfig);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+    };
+  } catch {
+    return { check: async () => false };
+  }
 }
 
 export function createApiApp(options: ApiAppOptions = {}): Express {
@@ -19,7 +43,9 @@ export function createApiApp(options: ApiAppOptions = {}): Express {
       error instanceof Error ? error : new Error('Invalid API configuration');
   }
 
-  const dependencies = options.dependencies ?? { check: async () => true };
+  const dependencies =
+    options.dependencies ??
+    createDefaultDependencies(options.env ?? process.env);
   const app = express();
   app.disable('x-powered-by');
   app.get('/health/live', (_request, response) => {

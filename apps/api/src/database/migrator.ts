@@ -77,6 +77,31 @@ async function readLedger(client: PoolClient): Promise<MigrationLedgerEntry[]> {
   return result.rows;
 }
 
+export async function verifyMigrationReadiness(
+  config: DatabaseConfig,
+): Promise<void> {
+  const pool = createDatabasePool(config);
+  let client: PoolClient | undefined;
+  try {
+    client = await pool.connect();
+    await verifyDatabaseConnection(client, config.target);
+    await verifyPostgis(client);
+    const result = await client.query<{ version: string }>(
+      `SELECT version
+         FROM ${ledgerTable}
+        WHERE version = $1
+          AND outcome = 'applied'`,
+      [defaultMigrations[0].version],
+    );
+    if (!result.rows[0]) {
+      throw new Error('Required staging migration is not installed');
+    }
+  } finally {
+    client?.release();
+    await pool.end();
+  }
+}
+
 async function applyMigration(
   client: PoolClient,
   migration: MigrationDefinition,
@@ -103,9 +128,10 @@ export async function runMigrations(
 ): Promise<MigrationResult> {
   validateMigrations(migrations);
   const pool = createDatabasePool(config);
-  const client = await pool.connect();
+  let client: PoolClient | undefined;
   let locked = false;
   try {
+    client = await pool.connect();
     await verifyDatabaseConnection(client, config.target);
     await client.query('SELECT pg_advisory_lock(hashtextextended($1, 0))', [
       lockKey,
@@ -145,7 +171,7 @@ export async function runMigrations(
     const postgis = await verifyPostgis(client);
     return { postgis, ledger: await readLedger(client) };
   } finally {
-    if (locked) {
+    if (locked && client) {
       try {
         await client.query(
           'SELECT pg_advisory_unlock(hashtextextended($1, 0))',
@@ -155,7 +181,7 @@ export async function runMigrations(
         client.release();
       }
     } else {
-      client.release();
+      client?.release();
     }
     await pool.end();
   }

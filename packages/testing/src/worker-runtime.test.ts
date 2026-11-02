@@ -67,3 +67,21 @@ test('Worker readiness rejects missing configuration without starting business w
   server.close();
   await once(server, 'close');
 });
+
+test('Worker configuration accepts the Railway PORT variable', async () => {
+  const module = await loadWorkerModule();
+  assert.ok(module, 'Worker app module must exist');
+  const configModule = (await import('../../../apps/worker/src/config.js')) as {
+    parseWorkerConfig: (env: NodeJS.ProcessEnv) => { port: number };
+  };
+  const config = configModule.parseWorkerConfig({
+    VQ_REPOSITORY: 'funmarket/VibeQuestGuardians',
+    VQ_REF: 'vibefoundation',
+    VQ_COMMIT: 'a'.repeat(40),
+    VQ_BUILD: 'build-001',
+    VQ_SERVING_REVISION: 'revision-001',
+    VQ_ENVIRONMENT: 'staging',
+    PORT: '4321',
+  });
+  assert.equal(config.port, 4321);
+});

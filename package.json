@@ -16,6 +16,7 @@
   "scripts": {
     "test": "tsx --test packages/testing/src/api-runtime.test.ts packages/testing/src/architecture.test.ts packages/testing/src/client-foundation.test.ts packages/testing/src/error-envelope.test.ts packages/testing/src/runtime-identity.test.ts packages/testing/src/worker-runtime.test.ts",
     "test:database": "tsx --test packages/testing/src/database-foundation.test.ts",
+    "migrate:staging": "tsx apps/api/src/database/run-migrations.ts",
     "typecheck": "tsc --noEmit -p packages/testing/tsconfig.json",
     "typecheck:client": "tsc --noEmit -p apps/client/tsconfig.json",
     "build": "npm run typecheck && npm run typecheck:client && npm run build:client && npm run build:api && npm run build:worker",
