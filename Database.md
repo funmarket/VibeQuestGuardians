@@ -499,3 +499,66 @@ Read diagrams **A → B → C → D → E → F → G → H**; repeated entity n
 - Architecture context: same repository `structure.md`; files under `docs/product-design/*` are think-tank/reference material only and are not governing or canonical implementation authority.
 - Historical media implementation reference: `funmarket/VibeQuest`, `phase-0-foundation`, media retirement/cleanup and retries; historical Gemini ZIP for modal/camera/user interactions only. Historical VibeQuest schemas, migrations and infrastructure definitions are reference/failure evidence only and must not bootstrap VibeQuestGuardians persistence.
 - **This is a Product Owner-approved conceptual governing artifact.** It does not assert that Railway tables, uploads, timers, billing or integration tests exist. Source comparisons and diagram syntax checks do not constitute application/runtime acceptance. Repository mutation/publication remains a separate action requiring live-source verification and applicable authorization.
+
+
+
+## Current Persistence and Infrastructure Reconciliation — 2026-11-02
+
+This addendum reconciles the conceptual contract with the current repository and staging runtime. It does not create executable SQL or authorize speculative tables.
+
+### Current canonical persistence
+
+- PostgreSQL + PostGIS is the only verified authoritative transactional/spatial store for VibeQuest staging.
+- The staging migration runner completed against `vibequest_staging`, detected PostGIS 3.5.2, and reported one migration-ledger row before API readiness passed.
+- The API is the current migration authority. API and Worker must not independently race migrations.
+- The current source tree contains database configuration, adapter, migrator, readiness, and migration-runner code, but no Redis, Telegram, or object-storage adapter.
+
+### External persistence roles
+
+Redis and media storage are not part of the canonical relational database. When introduced, they must have explicit roles:
+
+| Store | Permitted role | Forbidden role | Required relational evidence |
+|---|---|---|---|
+| Redis | Ephemeral cache, queue transport, lease/idempotency coordination, rate-limit counters with defined TTL | Users, places, check-ins, VQ balance, payment, moderation, or any business fact whose loss changes truth | Durable job/idempotency/audit state remains in PostgreSQL where required |
+| Object storage/media bucket | Binary media objects and provider-side metadata | Canonical ownership, authorization, lifecycle, or business state | PostgreSQL media asset metadata, owner, purpose, status, integrity, retention, and deletion state |
+| Telegram | External host/provider transport | Separate user/business database or direct domain-table writer | D01 identity mapping, update/replay/idempotency evidence, and audit references in PostgreSQL |
+
+### Required future contracts before provisioning as integrated
+
+#### Redis contract
+
+Before a VibeQuest Redis service is accepted, define the owning runtime and exact key namespaces, serialization/versioning, TTLs, maximum payloads, retry/backoff behavior, duplicate handling, connection timeouts, health/readiness semantics, graceful shutdown, and provider-unavailable behavior. A successful Redis container or `REDIS_URL` variable alone is insufficient.
+
+#### Media contract
+
+Before a VibeQuest media bucket is accepted, define D13 asset metadata and lifecycle: owner, purpose, media type, byte limit, checksum/integrity, moderation/scan status, retention/deletion, object-key namespace, signed upload/download authorization, orphan cleanup, and provider outage behavior. The browser must not mint authoritative ownership or bypass API authorization.
+
+#### Telegram contract
+
+Before Telegram is accepted, define the host-adapter boundary: authenticated init data/update verification, replay protection, user/account mapping, command routing to the API, webhook or polling ownership, duplicate update handling, rate limits, secret rotation, provider outage behavior, and observability. Telegram must not be implemented as a second API or second canonical writer.
+
+### Current schema boundary
+
+No Redis keys, Telegram tables, media tables, or provider-specific columns should be added merely because Hooma has similarly named resources. Physical schema additions require an approved domain owner and acceptance matrix. At minimum, a future D13 implementation is expected to persist media asset metadata and lifecycle state in PostgreSQL while storing bytes in object storage; exact table and column names remain implementation decisions until that slice is authorized.
+
+### Staging connection requirements
+
+When the next bounded integration slice is authorized:
+
+1. Create or attach only staging-scoped resources in the existing VibeQuest Railway project.
+2. Use private Railway references for API/Worker connection variables where supported.
+3. Keep Telegram tokens and object-storage credentials sealed; do not expose values in logs, source, or this document.
+4. Verify connection from the actual consuming runtime, not from a separate shell or a successful provider deployment.
+5. Record provider version, environment, service identity, commit, migration state, and negative/failure evidence.
+6. Do not point staging at production Postgres, production buckets, production Redis, or Hooma resources.
+
+### Recommended decision
+
+Do not connect all integrations in one pass. PostgreSQL/PostGIS is already connected and should remain the canonical foundation. Add Redis as the first optional platform dependency only when a real queue/cache consumer and failure tests are ready. Add media with S03/D13 because its metadata and authorization model are part of the domain contract. Add Telegram with S02 because it is a host adapter and identity/authentication boundary. This sequence is safer and earlier enough; waiting until after business features would be risky, but provisioning disconnected services now would create false confidence.
+
+### Evidence status
+
+- **Verified:** staging PostGIS persistence, migration-ledger readiness, API health/identity, Worker deployment, Client deployment, production isolation.
+- **Verified absent:** VibeQuest Redis service, Telegram service, media bucket, and corresponding source adapters at the inspected branch HEAD.
+- **Reference only:** Hooma Web/Worker/Redis/Telegram/media topology. Hooma Telegram is a legacy redirect, not proof of a real Telegram backend.
+- **Unknown:** exact future provider choices, Telegram webhook/polling choice, Redis consumer contract, media object-store policy, and physical D13 schema. These must remain explicit decisions rather than guesses.
