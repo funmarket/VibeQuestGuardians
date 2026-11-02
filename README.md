@@ -1,8 +1,12 @@
 # VibeQuestGuardians — VibeQuest
 
-**Project stage: PRE-S01 APPROVED GOVERNING-DOCUMENT BASELINE.**
+**Project stage: S01-1 CONFIGURATION IMPLEMENTED; S01 APPLICATION WORK REMAINS INCOMPLETE.**
 
-VibeQuestGuardians is the clean new implementation project for **VibeQuest**, a mobile-first local exploration, cultural Trails, Guardian, community, social, challenge, VQ, Marketplace, and local-commerce product. The Product Owner-approved governing set defines the complete target product and engineering boundaries. The application itself is not yet complete, S01 does not begin automatically, and neither staging nor production is accepted merely because the governing documents are approved.
+VibeQuestGuardians is the clean new implementation project for **VibeQuest**, a mobile-first local exploration, cultural Trails, Guardian, community, social, challenge, VQ, Marketplace, and local-commerce product. The Product Owner-approved governing set defines the complete target product and engineering boundaries. The Node.js 24/npm workspace and quality-tool configuration from S01-1 are published, but the application itself is not yet complete, and neither staging nor production is accepted.
+
+## Current implementation status
+
+S01-1 established the bounded Node.js 24 workspace/toolchain configuration in published commit `e78ffb43425c951360b4670cd128c141f8025c55`. It did not implement Client, API or Worker runtime behavior, databases, migrations, CI, deployment, or product features. Those remain separately authorized S01 work.
 
 > **Approved governing documents ≠ implemented application ≠ staging acceptance ≠ production acceptance.**
 

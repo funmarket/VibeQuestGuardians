@@ -153,10 +153,10 @@ An agent may not narrow, remove, skip, rename, or weaken a verification command 
 |---|---|---|
 | Repository | `funmarket/VibeQuestGuardians` | Verify current HEAD before every mutation |
 | Working branch | `vibefoundation` | Integration branch; not proof of release |
-| Product stage | `PRE-S01 APPROVED GOVERNING-DOCUMENT BASELINE` | Documents approved; application not accepted |
-| Client | Not verified as implemented in current branch | Do not assume source tree exists |
-| API | Not verified as implemented in current branch | Do not assume runtime exists |
-| Worker | Not verified as implemented in current branch | Must be separately runnable |
+| Product stage | `S01-1 CONFIGURATION IMPLEMENTED; S01 INCOMPLETE` | Node 24 workspace/toolchain configuration is published; application not accepted |
+| Client | S01-1 manifest/config boundary only | No Client runtime or UI behavior was introduced |
+| API | S01-1 manifest/config boundary only | No API runtime or HTTP behavior was introduced |
+| Worker | S01-1 manifest/config boundary only | No Worker runtime or job behavior was introduced |
 | Physical database | Not verified | `Database.md` is conceptual, not installed state |
 | Migrations | Not verified | A migration file is not installation evidence |
 | Staging | Not accepted | Must be isolated, persistent, production-shaped |
@@ -164,7 +164,7 @@ An agent may not narrow, remove, skip, rename, or weaken a verification command 
 | Gemini reference | External local reference only | UX/interaction evidence; no implementation authority |
 | Historical repositories | Reference only | No blind code/schema/infrastructure transplant |
 
-**Current next permissible action:** complete the explicitly authorized documentation reconciliation and a fresh S01-1 readiness check; S01-1 implementation requires separate bounded authorization against a fresh `vibefoundation` HEAD. No source, migration, CI, Railway, runtime, database, deployment, or product behavior is authorized by this status entry.
+**Current next permissible action:** complete this S01-1 evidence reconciliation, then authorize the next bounded S01 slice separately. No source behavior, migration, CI, Railway, runtime, database, deployment, or product behavior beyond the published S01-1 configuration is authorized by this status entry.
 
 ## 4. Progress board
 
@@ -172,7 +172,7 @@ Update this table only with evidence. Add commit SHA, test/run links, or runtime
 
 | Milestone | Name | Status | Dependencies | Owner/agent | Last update | Evidence |
 |---|---|---|---|---|---|---|
-| S01 | Engineering substrate, CI, migration, readiness, staging path | PLANNED | Approved governing set; S01-1 packet prepared; separate implementation authorization required | Platform tooling | S01-1 planning packet committed; no implementation observed | `00de94d1`, `fc4011b7`, `9bc7e3f6`; no workspace/configuration/lockfile/source/test/migration/CI/runtime/staging evidence |
+| S01 | Engineering substrate, CI, migration, readiness, staging path | PLANNED | Approved governing set; S01-1 configuration published; remaining S01 slices separately authorized | Platform tooling | 2026-11-02 | Source: `e78ffb43425c951360b4670cd128c141f8025c55` added exactly 20 S01-1 configuration files; prior execution record reports positive/negative checks, but raw logs are not persisted in the repository. No API/Worker runtime, database, migration, CI, or staging evidence. |
 | S02 | D01 identity, authorization, shell, Web/Telegram host authority | PLANNED | S01 | Unassigned |  |  |
 | S03 | D13 media and device capabilities | PLANNED | S01–S02 | Unassigned |  |  |
 | S04 | D02 profiles, D03 social graph, D09 business authority | PLANNED | S02–S03 | Unassigned |  |  |
@@ -503,6 +503,9 @@ Every material claim must point to direct evidence.
 | E-001 | Governing documents define the approved baseline. | SOURCE-OBSERVED | `Master Plan.md`, `Requirements.md`, `structure.md`, `Database.md` | Current branch HEAD | Documentation audit | Does not prove implementation |
 | E-002 | Hooma runtime topology uses separate API/Worker/Web services and readiness/deploy identity patterns. | HISTORICAL-OBSERVED | Hooma reference repository/Railway project | Verified during reference audit | Source/Railway inspection | Reference only; not reusable authority |
 | E-003 | Gemini files contain mock/local/seeded/simulated behaviors. | HISTORICAL-OBSERVED | `C:\Users\GrowB\Downloads\geminiapp` | Inspected 2026-11-01 | Read-only source audit | Local reference, not repository source |
+| E-004 | S01-1 Node 24 workspace/toolchain configuration was published. | SOURCE-OBSERVED | GitHub commit `e78ffb43425c951360b4670cd128c141f8025c55`; parent `eb6d0c9fab8efe1bd2dd7ad36f5112c9c11d51c2` | Current `vibefoundation` HEAD | GitHub tree/diff inspection | Proves source scope and contents, not command execution or runtime acceptance |
+| E-005 | Required S01-1 positive and negative command outcomes were reported. | AGENT-REPORTED | Prior Codex execution record for candidate `e78ffb43425c951360b4670cd128c141f8025c55` | Reported 2026-11-02 | Prior execution record | Raw command logs are not persisted in this repository; do not upgrade to EXECUTION-VERIFIED |
+| E-006 | npm reported five moderate audit findings during S01-1 install. | AGENT-REPORTED | Prior Codex npm install output | Reported 2026-11-02 | Prior execution record | Not independently audited or remediated; dependency remediation was out of scope |
 
 Add evidence before changing a milestone status.
 
@@ -570,6 +573,7 @@ Do not invent a workaround.
 | 2026-11-01 | Platform preferences added | Added D02 ownership, system/Telegram precedence, language/theme/text-size/accessibility behavior and S01/S02 acceptance evidence. |
 | 2026-11-01 | `0e8c2d22f9f0fa5952dfb15e51b5c725851a013c` | Added mandatory pre-implementation, test-first, readability, and verification-gate protection controls after the S01 process audit. |
 | 2026-11-01 | `fc4011b73a7b7700884d4d30a6dc5b097b8bdacc` | Recorded Product Owner-approved Hooma-aligned S01-1 workspace direction; source, migration, CI, Railway, and runtime work remain unimplemented. |
+| 2026-11-02 | `e78ffb43425c951360b4670cd128c141f8025c55` | Published S01-1 Node 24 workspace/toolchain configuration; application runtimes and broader S01 acceptance remain open. |
 
 Append every future plan change with date, commit SHA and semantic reason.
 

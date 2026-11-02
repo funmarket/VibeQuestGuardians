@@ -6,11 +6,11 @@ This file is the repository’s durable agent guidance. Read it before acting. I
 
 - Repository: funmarket/VibeQuestGuardians
 - Working branch: vibefoundation
-- Current stage: PRE-S01 APPROVED GOVERNING-DOCUMENT BASELINE
+- Current stage: S01-1 CONFIGURATION IMPLEMENTED; S01 INCOMPLETE
 - Product: VibeQuest
 - Stable/release branch: main
 
-Document approval does not prove implementation, database state, staging acceptance, deployment, or production acceptance.
+S01-1 configuration publication does not prove application runtime, database state, staging acceptance, deployment, or production acceptance.
 
 ## 2. Required reading order
 
@@ -35,7 +35,7 @@ This file governs agent procedure, not product policy.
 
 ## 3. Current repository layout
 
-The current branch is a governing-document baseline. Do not assume application code exists.
+The current branch contains the published S01-1 workspace/toolchain configuration. Do not assume application runtimes or business application code exist.
 
     /
       AGENTS.md
@@ -48,7 +48,7 @@ The current branch is a governing-document baseline. Do not assume application c
       docs/
         product-design/       # reference/think-tank material only
 
-The target implementation layout is defined by structure.md and the S01 milestone in EXECUTION_PLAN.md:
+The target implementation layout is defined by structure.md and the S01 milestone in EXECUTION_PLAN.md. S01-1 has introduced only the empty workspace manifests/configuration within the first five boundaries; no runtime source exists:
 
     apps/
       client/                 # Web + Telegram host adaptation
@@ -60,13 +60,13 @@ The target implementation layout is defined by structure.md and the S01 mileston
     database/
       migrations/
 
-Do not create these directories or claim they exist until implementation is explicitly authorized and verified.
+Do not claim Client, API or Worker runtime behavior exists until it is explicitly implemented and verified.
 
 ## 4. Commands and verification
 
 ### Current verified commands
 
-None. The current branch has no verified package manifest, dependency installation, build script, test runner, lint command, or typecheck command. Do not invent commands or copy them from historical repositories.
+The published S01-1 root manifest provides `npm ci`, `npm run format:check`, and `npm run lint:config`. The prior implementation execution record reports the required positive and negative checks as passing, but this documentation reconciliation does not treat that report as independently re-executed command evidence.
 
 ### Once implementation exists
 
