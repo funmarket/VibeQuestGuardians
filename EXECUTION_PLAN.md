@@ -918,3 +918,43 @@ Use Node 24 and the configured isolated database. Run focused RED, focused GREEN
 The authorized S02-2 slice is **IMPLEMENTED and VERIFIED locally** before commit: database-backed `/me`, idempotent session revoke, safe failure envelopes, token hashing/non-disclosure, expiry/revocation handling, and API shutdown cleanup. No Telegram deployment, Redis, media, frontend, Railway, staging, or production mutation occurred.
 
 Implementation commit: `df2fe90a5ed04a76017e6b587b184b1085f81526`.
+
+## S02-2 staging verification — 2026-11-02
+
+### Reconciliation and scope
+
+- Repository: `funmarket/VibeQuestGuardians`
+- Branch: `vibefoundation`
+- Source commit deployed: `bb0ec37a4435995e9eec408adfd2cec631f38dbd`
+- Railway project: `VibeQuest` (`6aed68eb-cb62-4d2e-8606-900b57b6c389`)
+- Railway environment: `staging` (`fd6553dc-5a72-4b28-b0ae-ad1d938dd468`)
+- Services in scope: `staging-api`, `staging-worker`, `staging-client`, and `staging-postgis`
+- Production environment and production `Postgres` were not changed.
+- No source, schema, Redis, media, Telegram, or client changes were made in this staging task.
+
+### Deployment evidence
+
+| Requirement | Exact evidence | Result | Limitation |
+|---|---|---|---|
+| Exact source deployed | Railway deployment `d6069876-4fc5-4747-a876-5589fac92082` was connected to `vibefoundation` at `bb0ec37`; build completed successfully | VERIFIED | A later staging-only variable redeploy is recorded below |
+| Migration authority | Deployment `d6069876-4fc5-4747-a876-5589fac92082` deploy log: `migration target=vibequest_staging postgis=3.5.2 ledger=2` | VERIFIED | Direct SQL catalog inspection was unavailable through the Railway connector |
+| Runtime identity | Deployment `4e0e6f0b-bb48-421b-ab98-df96a1121864` completed `SUCCESS`; `/health/ready` and `/health/identity` report full commit `bb0ec37a4435995e9eec408adfd2cec631f38dbd`, build `s02-2-staging-bb0ec37`, environment `staging`, serving revision `4e0e6f0b-bb48-421b-ab98-df96a1121864` | VERIFIED | None for the identity contract |
+| Liveness | Browser check of `https://staging-api-staging-dc86.up.railway.app/health/live` returned `{"status":"alive"}` | VERIFIED | None |
+| Readiness | Browser check of `/health/ready` returned `{"status":"ready"}` with the exact identity above | VERIFIED | None |
+| Unauthenticated session boundary | Browser check of `/me` returned safe `401 AUTHORIZATION_ERROR` with `Authorization required` | VERIFIED | Only the no-credential negative path was exercised |
+| Valid session, expiry, revoke, duplicate revoke, cleanup | No staging PostgreSQL TCP proxy or Railway SQL/query tool is available; no disposable staging fixture was created | BLOCKED | Do not expose the database or insert ad hoc data without an approved safe access path |
+| Service status | Environment status: `staging-api`, `staging-worker`, `staging-client`, and `staging-postgis` online; active staging API deployment `4e0e6f0b-bb48-421b-ab98-df96a1121864` successful | VERIFIED | Railway still reports 9 historical recent failures across API/client/worker; no active failure remained |
+| Secrets/log safety | Railway variable names were inspected with values redacted; deploy logs showed no database URL, token, or raw session credential | VERIFIED | No raw secret was printed or committed |
+
+### Corrective staging patch
+
+The first metadata-only staging patch set `VQ_COMMIT` to the abbreviated value `bb0ec37`. The runtime identity contract correctly rejected that value because `VQ_COMMIT` must be a full 40-character hexadecimal SHA, and deployment `9a41f9d5-ce3d-4176-913f-8eb89aa08c04` repeatedly failed with `ConfigurationError: Required API configuration is invalid`. The corrective patch changed only staging variables:
+
+- `VQ_COMMIT=bb0ec37a4435995e9eec408adfd2cec631f38dbd`
+- `VQ_BUILD=s02-2-staging-bb0ec37`
+
+The corrective deployment completed successfully as `4e0e6f0b-bb48-421b-ab98-df96a1121864`. This was an in-scope staging correction; no production variable or deployment was touched.
+
+### Acceptance status
+
+S02-2 is **STAGING PARTIALLY VERIFIED**, not `STAGING ACCEPTED`. The source deployment, migration log, exact runtime identity, liveness, readiness, and unauthenticated HTTP authorization failure are verified. Valid-session resolution, expiry/revocation, idempotent revoke, fixture cleanup, and shutdown evidence remain blocked until a safe staging database access path is explicitly available. The next action is to provide a controlled staging-only database query path or an approved temporary access mechanism; do not mark S02-2 staging accepted before those checks pass.
