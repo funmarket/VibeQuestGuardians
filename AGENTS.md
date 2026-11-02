@@ -184,3 +184,29 @@ A deeper applicable file may add constraints but may not silently override Produ
 ## 10. Historical references
 
 The old VibeQuest repository, HoomaUltimate, Railway references, Gemini files, ZIPs and docs/product-design/* are reference material only. They may inform UX, failure prevention, engineering patterns or bounded algorithms. They are never authority for current code, schema, authentication, deployment, infrastructure, domain ownership or acceptance.
+
+
+
+## Current-state reconciliation — 2026-11-02
+
+This addendum supersedes earlier baseline statements in this file that describe the branch as S01-1-only or say that application runtimes and staging do not exist. Those statements are historical and are retained only for provenance.
+
+Verified current checkpoint:
+
+- Repository: `funmarket/VibeQuestGuardians`
+- Branch: `vibefoundation`
+- Documentation reconciliation checkpoint before this edit: `70b1c1f35747d0cea08ab378e055be12655f6cf3`
+- Runtime source commit: `9d91ec12488e1741c9cd637b308e5c94dcfa4d1f`
+- Client health-check correction: `f985dc9a180b6fddd23b0c508250844701512b9b`
+
+Verified staging in Railway project `VibeQuest`:
+
+- PostgreSQL/PostGIS: persistent staging database online; migration runner detected PostGIS 3.5.2 and one migration-ledger row.
+- API: staging deployment successful; live, ready, and identity endpoints verified.
+- Worker: staging deployment successful with Node 24 runtime evidence.
+- Client: staging deployment successful and live after the Vite health-check host correction.
+- Production remains isolated with the existing Postgres service only; no production application resources were changed.
+
+S01 is therefore **IMPLEMENTED and partially VERIFIED at staging runtime**, not production accepted. Redis, Telegram, and media remain planned and must not be claimed as integrated until their source contracts, consumers, tests, and staging evidence exist.
+
+The clean implementation target remains the existing runtime boundaries: Client, API, Worker, PostgreSQL/PostGIS, and explicit provider adapters. Do not treat this reconciliation as authorization to add Redis, media, Telegram, production services, or unrelated product behavior.
