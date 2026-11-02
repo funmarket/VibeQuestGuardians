@@ -22,6 +22,12 @@ async function loadModule(
   }
 }
 
+function assertAccessibleButtons(markup: string): void {
+  if (/<button(?:\s[^>]*)?>\s*<\/button>/.test(markup)) {
+    throw new Error('Every button must have an accessible name');
+  }
+}
+
 test('Client React entry renders a neutral accessible foundation surface', async () => {
   const module = await loadModule('../../../apps/client/src/App.js');
   assert.ok(module, 'Client App module must exist');
@@ -30,6 +36,14 @@ test('Client React entry renders a neutral accessible foundation surface', async
   assert.match(markup, /main/);
   assert.match(markup, /aria-live/);
   assert.match(markup, /button/);
+  assert.doesNotThrow(() => assertAccessibleButtons(markup));
+});
+
+test('accessibility harness detects a deliberate unlabeled control violation', () => {
+  assert.throws(
+    () => assertAccessibleButtons('<button></button>'),
+    /accessible name/,
+  );
 });
 
 test('host adapter remains functional without Telegram globals', async () => {
