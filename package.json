@@ -18,9 +18,12 @@
     "test:database": "tsx --test packages/testing/src/database-foundation.test.ts",
     "typecheck": "tsc --noEmit -p packages/testing/tsconfig.json",
     "typecheck:client": "tsc --noEmit -p apps/client/tsconfig.json",
-    "build": "npm run typecheck && npm run typecheck:client && npm run build:client",
+    "build": "npm run typecheck && npm run typecheck:client && npm run build:client && npm run build:api && npm run build:worker",
     "build:client": "npm run build --workspace @vibequest/client",
-    "format:check": "prettier --check package.json eslint.config.js tsconfig.base.json apps/api/package.json apps/api/tsconfig.json apps/api/src apps/client/package.json apps/client/tsconfig.json apps/client/vite.config.ts apps/client/index.html apps/client/src apps/worker/package.json apps/worker/tsconfig.json apps/worker/src packages/contracts/package.json packages/contracts/tsconfig.json packages/contracts/src packages/testing/package.json packages/testing/tsconfig.json packages/testing/src",
+    "build:api": "npm run build --workspace @vibequest/api",
+    "build:worker": "npm run build --workspace @vibequest/worker",
+    "test:built": "tsx --test packages/testing/src/built-artifact.test.ts",
+    "format:check": "prettier --check package.json eslint.config.js tsconfig.base.json apps/api/package.json apps/api/tsconfig.json apps/api/tsconfig.build.json apps/api/src apps/client/package.json apps/client/tsconfig.json apps/client/vite.config.ts apps/client/index.html apps/client/src apps/worker/package.json apps/worker/tsconfig.json apps/worker/tsconfig.build.json apps/worker/src packages/contracts/package.json packages/contracts/tsconfig.json packages/contracts/src packages/testing/package.json packages/testing/tsconfig.json packages/testing/src",
     "lint:config": "eslint eslint.config.js"
   },
   "devDependencies": {

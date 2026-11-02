@@ -1,0 +1,74 @@
+name: S01 foundation
+
+on:
+  push:
+    branches: [vibefoundation]
+  pull_request:
+    branches: [vibefoundation]
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_USER: vq_ci
+          POSTGRES_PASSWORD: vq_ci_password
+          POSTGRES_DB: vibequest_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U vq_ci -d vibequest_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.15.0
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Check lint configuration
+        run: npm run lint:config
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Typecheck client
+        run: npm run typecheck:client
+
+      - name: Build all runtimes
+        run: npm run build
+
+      - name: Verify built runtimes
+        run: npm run test:built
+
+      - name: Run unit and runtime regression tests
+        run: npm test
+
+      - name: Run architecture checks
+        run: npm test -- packages/testing/src/architecture.test.ts
+
+      - name: Run isolated Postgres/PostGIS integration tests
+        env:
+          VQ_DATABASE_URL: postgresql://vq_ci:vq_ci_password@127.0.0.1:5432/vibequest_ci
+          VQ_DATABASE_TARGET: vibequest_ci
+          VQ_DATABASE_APPROVED_TARGET: vibequest_ci
+          VQ_DATABASE_CONNECT_TIMEOUT_MS: '5000'
+          VQ_TEST_DATABASE_NO_POSTGIS_URL: postgresql://vq_ci:vq_ci_password@127.0.0.1:5432/postgres
+        run: npm run test:database

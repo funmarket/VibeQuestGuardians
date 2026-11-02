@@ -1,6 +1,6 @@
 import { createWorkerServer } from './app.js';
 
-const server = createWorkerServer();
+const server = createWorkerServer({ env: process.env });
 
 function shutdown(): void {
   server.close(() => process.exit(0));

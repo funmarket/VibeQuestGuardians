@@ -1,6 +1,6 @@
 import { createApiServer } from './app.js';
 
-const server = createApiServer();
+const server = createApiServer({ env: process.env });
 
 function shutdown(): void {
   server.close(() => process.exit(0));
