@@ -1,0 +1,30 @@
+{
+  "name": "vibequest-guardians-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "workspaces": [
+    "apps/client",
+    "apps/api",
+    "apps/worker",
+    "packages/contracts",
+    "packages/testing"
+  ],
+  "scripts": {
+    "format:check": "prettier --check package.json eslint.config.js tsconfig.base.json apps/api/package.json apps/api/tsconfig.json apps/client/package.json apps/client/tsconfig.json apps/client/vite.config.ts apps/worker/package.json apps/worker/tsconfig.json packages/contracts/package.json packages/contracts/tsconfig.json packages/testing/package.json packages/testing/tsconfig.json",
+    "lint:config": "eslint eslint.config.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}
