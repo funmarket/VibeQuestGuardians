@@ -636,3 +636,133 @@ Before S02-1 source changes, the agent must record its implementation packet, wr
 ### Documentation and infrastructure rule
 
 A Railway service, environment variable, successful container, or provider deployment is not application integration evidence. Redis, media, and Telegram may only move from PLANNED to IMPLEMENTED after the owning source contract, actual consumer, secrets/reference wiring, negative tests, cleanup/shutdown behavior, and live staging verification all exist.
+
+## S02-1 implementation packet — D01 identity and Web/Telegram host contracts
+
+### Authorized scope
+
+Implement one contract-only vertical slice for D01:
+
+- canonical authenticated principal validation;
+- Web and Telegram host-context assertion contracts;
+- fail-closed session state validation;
+- fail-closed capability authorization;
+- replay-guard and duplicate-provider-link boundaries;
+- focused tests proving the contracts and failure semantics.
+
+### Exact target and checkpoint
+
+- Repository: `funmarket/VibeQuestGuardians`
+- Branch: `vibefoundation`
+- Pre-mutation HEAD: `034e54ba5f96f85be7dcb2914d3f7823150e22ab`
+
+### Files allowed to change
+
+- `EXECUTION_PLAN.md`
+- `package.json`
+- `packages/contracts/src/identity-host.ts`
+- `packages/testing/src/identity-host.test.ts`
+
+No other source, test, configuration, dependency, database, Railway, or production files are authorized.
+
+### Owner and canonical writer
+
+- Domain owner: D01 Identity and Authorization.
+- Canonical writer: future D01 identity/session application service; this slice writes no database state and does not introduce a competing writer.
+- Web and Telegram are host adapters only. They resolve to the same canonical principal shape.
+
+### Interfaces and failure semantics
+
+- `CanonicalPrincipal`: authenticated account/session identity with host metadata and explicit capabilities.
+- `HostContextAssertion`: verified Web session or verified Telegram init-data assertion; unverified Telegram data is never accepted as identity.
+- `ReplayGuard`: interface boundary only; no Redis or in-memory production authority is added.
+- `ProviderLinkRegistry`: interface boundary only; duplicate linking fails closed.
+- Missing, malformed, unverified, expired, revoked, replayed, duplicate, and unauthorized contexts throw typed identity errors.
+- Client-provided identity fields are input only and cannot become canonical without a verified assertion.
+
+### Tests to write first
+
+- valid canonical principal is accepted;
+- malformed principal is rejected;
+- valid Web assertion resolves through the canonical principal shape;
+- Telegram assertion requires verified init-data and does not bypass principal validation;
+- missing and invalid Telegram verification fail closed;
+- replay guard rejects a repeated assertion key;
+- expired and revoked sessions fail closed;
+- duplicate provider linking fails closed;
+- missing capability fails closed;
+- Web and Telegram assertions resolve to the same principal representation;
+- no database, Redis, media, or external provider mutation occurs.
+
+### Expected red result
+
+The new focused test file must fail before production implementation because the authorized contract module does not yet exist or does not yet expose the required behavior. A test error caused by the test's own import or assertion syntax must be corrected until the failure is a genuine missing-behavior failure.
+
+### Migration and runtime impact
+
+- No migration.
+- No database write.
+- No Redis.
+- No media storage.
+- No Telegram bot token, webhook, polling, or Railway service.
+- No production mutation.
+- No frontend component or visual change.
+
+### Verification commands
+
+- `npm ci`
+- focused identity-host test;
+- `npm test`;
+- `npm run typecheck`;
+- `npm run typecheck:client`;
+- `npm run build`;
+- `npm run format:check`;
+- `npm run lint:config`;
+- `git diff --check`;
+- final branch/status/diff review.
+
+### Stop conditions
+
+- current owner is not D01;
+- a second canonical writer is required;
+- implementation requires a database, Redis, media, Telegram deployment, provider secret, or new dependency;
+- any unauthorized file changes appear;
+- verification requires a different semantic fix or new architecture;
+- current branch/HEAD changes with overlapping work.
+
+### Done when
+
+The two authorized source/test files contain the contract-only S02-1 implementation, the focused test was observed red before implementation and green afterward, the full authorized checks pass, the final diff contains no unrelated files, and this packet is updated with exact evidence at the resulting HEAD.
+
+### Next step
+
+NOT AUTHORIZED
+
+## S02-1 execution evidence
+
+### Reconciliation before implementation
+
+- Working checkout: disposable clone of `funmarket/VibeQuestGuardians`, branch `vibefoundation`.
+- Pre-mutation remote HEAD: `034e54ba5f96f85be7dcb2914d3f7823150e22ab`.
+- No Railway, database, Redis, media, Telegram deployment, provider-secret, or frontend files were changed.
+- `package.json` was added to the allowed-file list only to register the new focused test in the existing full-test command.
+
+### Test-first evidence
+
+| Stage | Exact command | Result |
+|---|---|---|
+| RED | `./node_modules/.bin/tsx.cmd --test packages/testing/src/identity-host.test.ts` before `identity-host.ts` existed | Failed with `ERR_MODULE_NOT_FOUND` for the authorized production contract; exit 1 |
+| Focused GREEN | `./node_modules/.bin/tsx.cmd --test packages/testing/src/identity-host.test.ts` | 10 passed, 0 failed |
+| Full tests | `C:\Program Files\nodejs\npm.cmd test` | 28 passed, 0 failed |
+| Typecheck | `C:\Program Files\nodejs\npm.cmd run typecheck` | Passed |
+| Client typecheck | `C:\Program Files\nodejs\npm.cmd run typecheck:client` | Passed |
+| Build | `C:\Program Files\nodejs\npm.cmd run build` | Client, API, and Worker builds passed |
+| Formatting | `C:\Program Files\nodejs\npm.cmd run format:check` | Passed |
+| Config lint | `C:\Program Files\nodejs\npm.cmd run lint:config` | Passed |
+| Diff hygiene | `git diff --check` | Passed |
+
+The shell `npm`/`npx` launchers resolve to a missing global npm installation in this environment. Verification used the installed `C:\Program Files\nodejs\npm.cmd` and local `node_modules/.bin` executables; this is an environment/tooling limitation, not a project dependency change.
+
+### Acceptance result
+
+S02-1 is **IMPLEMENTED and VERIFIED for the contract-only slice** in the disposable checkout. The implementation adds no runtime identity provider, database writer, Redis consumer, media adapter, Telegram deployment, or frontend behavior. Staging and production remain unchanged. The branch must be pushed only after the final diff review and commit records this evidence.
