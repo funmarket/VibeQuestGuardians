@@ -915,4 +915,6 @@ Use Node 24 and the configured isolated database. Run focused RED, focused GREEN
 
 ### Scope result
 
-The authorized S02-2 slice is **IMPLEMENTED and VERIFIED locally** before commit: database-backed `/me`, idempotent session revoke, safe failure envelopes, token hashing/non-disclosure, expiry/revocation handling, and API shutdown cleanup. No Telegram deployment, Redis, media, frontend, Railway, staging, or production mutation occurred. Final source/diff review and commit/push remain.
+The authorized S02-2 slice is **IMPLEMENTED and VERIFIED locally** before commit: database-backed `/me`, idempotent session revoke, safe failure envelopes, token hashing/non-disclosure, expiry/revocation handling, and API shutdown cleanup. No Telegram deployment, Redis, media, frontend, Railway, staging, or production mutation occurred.
+
+Implementation commit: `df2fe90a5ed04a76017e6b587b184b1085f81526`.
