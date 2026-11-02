@@ -1337,3 +1337,65 @@ approved product design
 ```
 
 There is no MVP completion gate, partial-foundation product acceptance, fake business state, deferred approved launch domain, Handshake cancellation, Marketplace escrow, report-as-automatic-punishment, unscoped god-mode Admin or hard-coded immutable D05 confidence formula in this plan. This Product Owner-approved living `Master Plan.md` is the controlling implementation/production-execution authority below any later explicit Product Owner decision; ordinary implementation must not reopen that hierarchy or demand backward edits to older design documents merely to remove textual differences.
+
+
+
+## Current Runtime Reconciliation Addendum — 2026-11-02
+
+This addendum is the latest source-of-truth reconciliation for the current branch and Railway project. Where earlier sections say that S01 has no runtime or staging evidence, those statements are historical baseline text and are superseded by this addendum. They remain useful as provenance but must not be used to describe the current state.
+
+### Verified repository checkpoint
+
+- Repository: `funmarket/VibeQuestGuardians`
+- Branch: `vibefoundation`
+- Current branch HEAD: `f985dc9a180b6fddd23b0c508250844701512b9b`
+- Backend and worker staging services remain pinned to the prior S01 runtime commit `9d91ec12488e1741c9cd637b308e5c94dcfa4d1f`; the later commit adds the client Vite health-check host correction only.
+- Current source contains separate `apps/client`, `apps/api`, and `apps/worker` boundaries plus shared contracts/testing packages. No Redis adapter, Telegram host adapter, or media/object-storage adapter is present in the current source tree.
+
+### Verified Railway topology
+
+Project `VibeQuest` (`6aed68eb-cb62-4d2e-8606-900b57b6c389`) has an isolated `staging` environment (`fd6553dc-5a72-4b28-b0ae-ad1d938dd468`) with:
+
+| Service | Current evidence | Acceptance meaning |
+|---|---|---|
+| `staging-postgis` | Online, persistent 5 GB volume, PostGIS image, deployment success | PostgreSQL/PostGIS substrate exists; migration runner detected PostGIS 3.5.2 and one migration-ledger row |
+| `staging-api` | Online, exact repository/ref/commit identity, `/health/live`, `/health/ready`, and `/health/identity` verified | API runtime and database readiness are connected |
+| `staging-worker` | Successful deployment with Node 24 runtime evidence | Worker runtime is deployed; full business-job acceptance remains future work |
+| `staging-client` | Online at the Railway domain after Vite health-check host correction | Web client boundary is reachable; product behavior is not implied |
+| Redis | Not present | Must not be added without a queue/cache contract and runtime consumer |
+| Telegram | Not present | Must be introduced as a host adapter, not a second backend |
+| Media storage | Not present | Must be introduced with D13 ownership, object metadata, retention, and access policy |
+
+Production remains isolated and unchanged: it currently contains only the existing `Postgres` service. No production API, Worker, Client, Redis, Telegram, or media service was added by this reconciliation.
+
+### Hooma reference findings
+
+The Railway project `HoomaUltimate` was inspected as reference evidence, not as an authority to transplant:
+
+- It has separate Web, Worker, Redis, Telegram, Postgres, and `hooma-media` bucket resources.
+- Its Telegram service currently runs a legacy redirect to the Web Telegram route; its successful Railway deployment is not proof of a real Telegram update/webhook adapter.
+- Its Worker has object-storage variables and a successful health check; this proves a deployment pattern, not that VibeQuest should copy its variables or ownership.
+- Its Worker logs show event handlers, while Hooma Redis logs show persistence activity; neither proves that VibeQuest's future Redis contract exists.
+- Hooma has pending staged Railway work, so it is not a clean acceptance baseline.
+
+### Decision: do not connect the full integration surface in one unbounded step
+
+It is not too late to add Redis, Telegram, and media. It is too early to wire them as arbitrary Railway services because the current VibeQuest source has no contracts or consumers for them. The safe decision is:
+
+1. Keep PostgreSQL/PostGIS as the only canonical business-state writer.
+2. Treat Redis as non-canonical infrastructure for explicitly owned queues, leases, rate limits, or derived cache entries. Add it only with a named contract, idempotency rules, retry semantics, shutdown behavior, and a real API/Worker consumer test.
+3. Treat media as object storage. Store media metadata, ownership, purpose, retention, and integrity references in PostgreSQL; never make the browser or object store authoritative for business state.
+4. Treat Telegram as a host adapter into the same API/domain commands used by Web. It must not own a duplicate user, place, check-in, VQ, or notification state.
+5. Provision isolated staging resources before production only after the relevant implementation packet and negative/failure tests exist. A resource may be created early for connectivity testing, but it must not be reported as integrated until source, variables, private networking, runtime checks, and cleanup evidence all pass.
+
+### Revised sequence after current S01 runtime
+
+- **S01 reconciliation:** keep the verified PostGIS/API/Worker/Client staging path; update stale evidence and preserve production isolation.
+- **S02:** establish D01 identity/authentication, application shell, and Web/Telegram host authority. Telegram integration remains an adapter contract, not a separate backend.
+- **S03:** establish D13 media metadata, object-storage adapter, upload/download authorization, size/type/integrity limits, retention, cleanup, and failure behavior.
+- **Platform integration slice after S02/S03 contracts:** add staging Redis, staging media bucket, and Telegram secret wiring only for the approved consumers; verify private references and runtime health.
+- **Later domain slices:** add business consumers of Redis/media/Telegram only when their owning D01–D28 acceptance matrix exists.
+
+### Current status vocabulary
+
+S01 is **IMPLEMENTED and partially VERIFIED at staging runtime** for the PostgreSQL/PostGIS, API, Worker, and Client substrate. S01 is not **PRODUCTION ACCEPTED**. Redis, Telegram, and media are **PLANNED**, not implemented or connected. No document or Railway resource may claim otherwise without fresh evidence.
