@@ -14,16 +14,22 @@
     "packages/testing"
   ],
   "scripts": {
-    "format:check": "prettier --check package.json eslint.config.js tsconfig.base.json apps/api/package.json apps/api/tsconfig.json apps/client/package.json apps/client/tsconfig.json apps/client/vite.config.ts apps/worker/package.json apps/worker/tsconfig.json packages/contracts/package.json packages/contracts/tsconfig.json packages/testing/package.json packages/testing/tsconfig.json",
+    "test": "tsx --test packages/testing/src/*.test.ts",
+    "typecheck": "tsc --noEmit -p packages/testing/tsconfig.json",
+    "build": "npm run typecheck",
+    "format:check": "prettier --check package.json eslint.config.js tsconfig.base.json apps/api/package.json apps/api/tsconfig.json apps/api/src apps/client/package.json apps/client/tsconfig.json apps/client/vite.config.ts apps/worker/package.json apps/worker/tsconfig.json apps/worker/src packages/contracts/package.json packages/contracts/tsconfig.json packages/contracts/src packages/testing/package.json packages/testing/tsconfig.json packages/testing/src",
     "lint:config": "eslint eslint.config.js"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
     "eslint": "^10.14.0",
     "prettier": "^3.9.10",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.5",
+    "tsx": "^4.20.6",
     "typescript": "^7.0.2",
     "vite": "^8.3.5"
   }
