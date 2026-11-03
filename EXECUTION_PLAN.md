@@ -1104,3 +1104,17 @@ The review of commit `329c86f89337681ba7680e829f60612b216ce099` identified an im
 ### Remaining blocker
 
 The separate API bearer contract is now explicit and tested, but the current allowed client composition has no safe source-truth credential issuer/storage or approved API-origin runtime configuration to supply it. The default App therefore remains truthfully unavailable rather than claiming authenticated Web integration. The repository full suite remains blocked at the existing database-backed session test when `VQ_TEST_DATABASE_URL` is unset; the fix-round focused suite and browser smoke pass.
+
+## S02-3 existing staging client deployment — 2026-11-03
+
+- Published branch: `vibefoundation` at `41f3cd18b1dad88c11c177a8f24265a3ee82f6da`.
+- Existing Railway project/environment only: `VibeQuest` / `staging`.
+- Service changed: `staging-client` only.
+- Deployment: `281514e3-52fc-4b52-9ebd-1e7838e27719`, `SUCCESS`, serving the exact commit above.
+- API, Worker, PostGIS, production, Redis, media and Telegram resources were not changed.
+- HTTPS browser smoke returned title `VibeQuest`, no foundation placeholder, the five destinations, one primary navigation, no console errors, and responsive shell content. The browser interaction selected `Explore` successfully.
+- The deployed client truthfully displays `Unavailable` because no approved Web bearer-token issuer/storage and API-origin runtime configuration exists yet. Authenticated Web acceptance is therefore **BLOCKED**, not claimed.
+
+### Current S02-3 status
+
+`STAGING DEPLOYED` for the truthful five-destination client shell. `STAGING ACCEPTED` is not permitted until the approved Web session-acquisition contract is implemented and live authenticated, expired, revoked and protected-action checks pass.
