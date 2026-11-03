@@ -1,10 +1,16 @@
 import express, { type Express } from 'express';
 import type { Server } from 'node:http';
+import type { Pool } from 'pg';
 import { errorResponse } from '../../../packages/contracts/src/error-envelope.js';
 import { IdentityContractError } from '../../../packages/contracts/src/identity-host.js';
+import type { MediaObjectStore } from '../../../packages/contracts/src/d13-media.js';
 import { parseApiConfig, type ApiConfig } from './config.js';
+import { createDatabasePool } from './database/adapter.js';
 import { parseDatabaseConfig } from './database/config.js';
 import { verifyMigrationReadiness } from './database/migrator.js';
+import { readProfile } from './d02/profile-fixtures.js';
+import { createMediaUpload, verifyMediaUpload } from './d13/media-assets.js';
+import { createRailwayS3ObjectStore } from './d13/railway-s3-object-store.js';
 import { checkApiReadiness, type ApiDependencyCheck } from './health.js';
 import {
   createPostgresSessionStore,
@@ -15,6 +21,9 @@ export interface ApiAppOptions {
   env?: NodeJS.ProcessEnv;
   dependencies?: ApiDependencyCheck;
   sessionStore?: SessionStore;
+  profilePool?: Pool;
+  mediaPool?: Pool;
+  mediaObjectStore?: MediaObjectStore;
 }
 
 function createDefaultDependencies(env: NodeJS.ProcessEnv): ApiDependencyCheck {
@@ -52,6 +61,9 @@ export function createApiApp(options: ApiAppOptions = {}): Express {
 
   const dependencies = options.dependencies ?? createDefaultDependencies(env);
   let sessionStore = options.sessionStore;
+  let profilePool = options.profilePool;
+  let mediaPool = options.mediaPool;
+  let mediaObjectStore = options.mediaObjectStore;
   if (!sessionStore && env.VQ_DATABASE_URL) {
     try {
       sessionStore = createPostgresSessionStore(parseDatabaseConfig(env));
@@ -59,9 +71,31 @@ export function createApiApp(options: ApiAppOptions = {}): Express {
       sessionStore = undefined;
     }
   }
+  if ((!profilePool || !mediaPool) && env.VQ_DATABASE_URL) {
+    try {
+      const pool = createDatabasePool(parseDatabaseConfig(env));
+      profilePool ??= pool;
+      mediaPool ??= pool;
+    } catch {
+      profilePool = undefined;
+      mediaPool = undefined;
+    }
+  }
+  if (!mediaObjectStore) {
+    try {
+      mediaObjectStore = createRailwayS3ObjectStore(env);
+    } catch {
+      mediaObjectStore = undefined;
+    }
+  }
   const app = express();
   app.disable('x-powered-by');
+  app.use(express.json({ limit: '32kb' }));
   app.locals.sessionStore = sessionStore;
+  app.locals.domainPools = [profilePool, mediaPool].filter(
+    (pool, index, pools): pool is Pool =>
+      Boolean(pool) && pools.indexOf(pool) === index,
+  );
   app.get('/health/live', (_request, response) => {
     response.status(200).json({ status: 'alive' });
   });
@@ -199,6 +233,168 @@ export function createApiApp(options: ApiAppOptions = {}): Express {
         );
     }
   });
+  app.get('/profile', async (request, response) => {
+    if (!sessionStore || !profilePool) {
+      response
+        .status(503)
+        .json(
+          errorResponse(
+            'DEPENDENCY_ERROR',
+            'Required dependency unavailable',
+            503,
+          ),
+        );
+      return;
+    }
+    const token = readBearerToken(request.header('authorization'));
+    if (!token) {
+      response
+        .status(401)
+        .json(
+          errorResponse('AUTHORIZATION_ERROR', 'Authorization required', 401),
+        );
+      return;
+    }
+    try {
+      const principal = await sessionStore.resolve(token);
+      const profile = await readProfile(profilePool, principal.accountId);
+      response.status(200).json(profile);
+    } catch (error) {
+      if (error instanceof IdentityContractError) {
+        response
+          .status(401)
+          .json(
+            errorResponse('AUTHORIZATION_ERROR', 'Authorization required', 401),
+          );
+        return;
+      }
+      response
+        .status(503)
+        .json(
+          errorResponse(
+            'DEPENDENCY_ERROR',
+            'Required dependency unavailable',
+            503,
+          ),
+        );
+    }
+  });
+  app.post('/media/uploads', async (request, response) => {
+    if (!sessionStore || !mediaPool || !mediaObjectStore) {
+      response
+        .status(503)
+        .json(
+          errorResponse(
+            'DEPENDENCY_ERROR',
+            'Required dependency unavailable',
+            503,
+          ),
+        );
+      return;
+    }
+    const token = readBearerToken(request.header('authorization'));
+    if (!token) {
+      response
+        .status(401)
+        .json(
+          errorResponse('AUTHORIZATION_ERROR', 'Authorization required', 401),
+        );
+      return;
+    }
+    try {
+      const principal = await sessionStore.resolve(token);
+      const result = await createMediaUpload(mediaPool, mediaObjectStore, {
+        ownerAccountId: principal.accountId,
+        purpose: request.body?.purpose,
+        mimeType: request.body?.mimeType,
+        byteSize: request.body?.byteSize,
+        checksum: request.body?.checksum,
+        idempotencyKey:
+          request.header('idempotency-key') ?? request.body?.idempotencyKey,
+      });
+      response.status(201).json(result);
+    } catch (error) {
+      if (error instanceof IdentityContractError) {
+        response
+          .status(401)
+          .json(
+            errorResponse('AUTHORIZATION_ERROR', 'Authorization required', 401),
+          );
+        return;
+      }
+      if (error instanceof Error && /required|invalid/i.test(error.message)) {
+        response
+          .status(400)
+          .json(
+            errorResponse('VALIDATION_ERROR', 'Request validation failed', 400),
+          );
+        return;
+      }
+      response
+        .status(503)
+        .json(
+          errorResponse(
+            'DEPENDENCY_ERROR',
+            'Required dependency unavailable',
+            503,
+          ),
+        );
+    }
+  });
+  app.post('/media/:assetId/complete', async (request, response) => {
+    if (!sessionStore || !mediaPool || !mediaObjectStore) {
+      response
+        .status(503)
+        .json(
+          errorResponse(
+            'DEPENDENCY_ERROR',
+            'Required dependency unavailable',
+            503,
+          ),
+        );
+      return;
+    }
+    const token = readBearerToken(request.header('authorization'));
+    if (!token) {
+      response
+        .status(401)
+        .json(
+          errorResponse('AUTHORIZATION_ERROR', 'Authorization required', 401),
+        );
+      return;
+    }
+    try {
+      const principal = await sessionStore.resolve(token);
+      response
+        .status(200)
+        .json(
+          await verifyMediaUpload(
+            mediaPool,
+            mediaObjectStore,
+            request.params.assetId,
+            principal.accountId,
+          ),
+        );
+    } catch (error) {
+      if (error instanceof IdentityContractError) {
+        response
+          .status(401)
+          .json(
+            errorResponse('AUTHORIZATION_ERROR', 'Authorization required', 401),
+          );
+        return;
+      }
+      response
+        .status(503)
+        .json(
+          errorResponse(
+            'DEPENDENCY_ERROR',
+            'Required dependency unavailable',
+            503,
+          ),
+        );
+    }
+  });
   return app;
 }
 
@@ -215,9 +411,15 @@ export function createApiServer(options: ApiAppOptions = {}): Server {
   const port = options.env ? parseApiConfig(options.env).port : 3000;
   const server = app.listen(port);
   const sessionStore = app.locals.sessionStore as SessionStore | undefined;
+  const domainPools = app.locals.domainPools as Pool[] | undefined;
   if (sessionStore) {
     server.once('close', () => {
       void sessionStore.close();
+    });
+  }
+  if (domainPools?.length) {
+    server.once('close', () => {
+      void Promise.all(domainPools.map((pool) => pool.end()));
     });
   }
   return server;

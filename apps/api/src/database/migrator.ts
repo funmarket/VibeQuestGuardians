@@ -62,6 +62,85 @@ export const defaultMigrations: MigrationDefinition[] = [
        WHERE revoked_at IS NULL;
     `,
   },
+  {
+    version: '0003_d02_profiles_fixtures',
+    sql: `
+      CREATE TABLE IF NOT EXISTS vq_d02_profiles (
+        id uuid PRIMARY KEY,
+        user_id uuid NOT NULL UNIQUE REFERENCES vq_d01_users(id) ON DELETE CASCADE,
+        display_name text,
+        fixture_namespace text,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS vq_platform_fixture_records (
+        namespace text NOT NULL,
+        record_type text NOT NULL,
+        record_id uuid NOT NULL,
+        owner_account_id text NOT NULL,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        PRIMARY KEY (namespace, record_type, record_id)
+      );
+
+      CREATE INDEX IF NOT EXISTS vq_platform_fixture_records_owner_lookup
+        ON vq_platform_fixture_records (owner_account_id, namespace);
+    `,
+  },
+  {
+    version: '0004_d13_media_assets',
+    sql: `
+      CREATE TABLE IF NOT EXISTS vq_d13_media_assets (
+        id uuid PRIMARY KEY,
+        owner_account_id text NOT NULL,
+        purpose text NOT NULL,
+        idempotency_key text NOT NULL UNIQUE,
+        mime_type text NOT NULL,
+        byte_size bigint NOT NULL CHECK (byte_size > 0),
+        checksum text,
+        object_key text NOT NULL UNIQUE,
+        status text NOT NULL CHECK (status IN ('pending', 'verified', 'retired')),
+        retention_until timestamptz,
+        retired_at timestamptz,
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+
+      CREATE TABLE IF NOT EXISTS vq_d13_retirement_intents (
+        media_asset_id uuid PRIMARY KEY REFERENCES vq_d13_media_assets(id) ON DELETE CASCADE,
+        reason text NOT NULL,
+        status text NOT NULL CHECK (status IN ('pending', 'retry', 'completed')),
+        attempts integer NOT NULL DEFAULT 0 CHECK (attempts >= 0),
+        next_attempt_at timestamptz NOT NULL DEFAULT now(),
+        created_at timestamptz NOT NULL DEFAULT now(),
+        updated_at timestamptz NOT NULL DEFAULT now()
+      );
+
+      CREATE INDEX IF NOT EXISTS vq_d13_media_owner_lookup
+        ON vq_d13_media_assets (owner_account_id, status);
+      CREATE INDEX IF NOT EXISTS vq_d13_media_retention_lookup
+        ON vq_d13_media_assets (retention_until, status)
+       WHERE status = 'verified';
+    `,
+  },
+  {
+    version: '0005_d02_fixture_environment',
+    sql: `
+      ALTER TABLE vq_platform_fixture_records
+        ADD COLUMN IF NOT EXISTS environment text NOT NULL DEFAULT 'test';
+
+      ALTER TABLE vq_platform_fixture_records
+        DROP CONSTRAINT IF EXISTS vq_platform_fixture_records_pkey;
+
+      ALTER TABLE vq_platform_fixture_records
+        ADD CONSTRAINT vq_platform_fixture_records_pkey
+        PRIMARY KEY (environment, namespace, record_type, record_id);
+
+      DROP INDEX IF EXISTS vq_platform_fixture_records_owner_lookup;
+      CREATE INDEX vq_platform_fixture_records_owner_lookup
+        ON vq_platform_fixture_records (environment, owner_account_id, namespace);
+    `,
+  },
 ];
 
 function checksum(sql: string): string {
