@@ -981,3 +981,35 @@ The existing Railway target was re-reconciled before retry:
 ### Retry status
 
 This retry remains **BLOCKED**, not `STAGING ACCEPTED`. No valid-session, expiry, revoke, duplicate-revoke, or staging-fixture-cleanup proof was obtained. No database mutation occurred during the retry, and no production resource was touched. Completion requires a safe database access path that does not expose credentials in command arguments, terminal input, logs, or committed files.
+
+## S02-2 staging acceptance closure — 2026-11-03
+
+The Railway CLI was authenticated in the host environment as `funmarketmn@gmail.com`. The existing staging target was used without creating or changing any project, environment, application service, production resource, source commit, Redis resource, media resource, or Telegram resource.
+
+### Direct staging evidence
+
+| Acceptance item | Exact evidence | Result |
+|---|---|---|
+| Database access | Disposable connection through a temporary proxy on existing `staging-postgis:5432`; `SELECT 1` passed | VERIFIED |
+| Valid session | One disposable D01 user/session; live `GET /me` returned `200` with the expected canonical principal | VERIFIED |
+| Unknown token | Live `GET /me` returned `401` | VERIFIED |
+| Expired session | Disposable session expired; live `GET /me` returned `401` | VERIFIED |
+| First revoke | Live `POST /sessions/revoke` returned `204` | VERIFIED |
+| Duplicate revoke | Repeated live `POST /sessions/revoke` returned `204` | VERIFIED |
+| Revoked session | Live `GET /me` after revoke returned `401` | VERIFIED |
+| Secret non-disclosure | Sanitized response-body assertion found no raw session token | VERIFIED |
+| Fixture cleanup | Targeted disposable rows deleted; follow-up count was `0` | VERIFIED |
+| Connection cleanup | Probe closed the PostgreSQL pool in `finally` | VERIFIED |
+
+The first probe's cleanup assertion exposed a probe-only multi-statement SQL error. The probe was corrected to use separate parameterized deletes, the prior disposable row was removed by its unique test prefix, and the complete probe then passed. No application source was changed.
+
+### Proxy and resource cleanup
+
+- Temporary proxy was created only on the existing `staging-postgis` service at `zephyr.proxy.rlwy.net:33055`.
+- The proxy was deleted after verification.
+- Final Railway listing returned no TCP proxies for `staging-postgis` in staging.
+- No production resource was touched.
+
+### Final status
+
+S02-2 is **STAGING ACCEPTED for the authorized D01 session boundary**. This covers deployed source commit `bb0ec37a4435995e9eec408adfd2cec631f38dbd`, active staging deployment `4e0e6f0b-bb48-421b-ab98-df96a1121864`, and the acceptance items above. It does not claim Telegram, Redis, media, or production acceptance; those remain later authorized work.
