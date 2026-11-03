@@ -8,9 +8,12 @@ import {
 } from './platform/identity.js';
 import { createHostAdapter } from './platform/host.js';
 import { resolvePlatformPreferences } from './platform/preferences.js';
-
-const destinations = ['Home', 'Explore', 'Share', 'Vibe', 'Purse'] as const;
-type Destination = (typeof destinations)[number];
+import { Shell, type Destination } from './ui/Shell.js';
+import { HomePage } from './ui/HomePage.js';
+import { ExplorePage } from './ui/ExplorePage.js';
+import { SharePage } from './ui/SharePage.js';
+import { VibePage } from './ui/VibePage.js';
+import { PursePage } from './ui/PursePage.js';
 
 export interface AppProps {
   initialSession?: ClientSession;
@@ -36,29 +39,8 @@ function sessionMessage(session: ClientSession): string {
   }
 }
 
-function destinationMessage(destination: Destination): string {
-  return `${destination} content is not yet available.`;
-}
-
 function statusTitle(status: SessionStatus): string {
   return status.charAt(0).toUpperCase() + status.slice(1);
-}
-
-function BellIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
-    </svg>
-  );
-}
-
-function ProfileIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="8" r="3" />
-      <path d="M5 21a7 7 0 0 1 14 0" />
-    </svg>
-  );
 }
 
 export function App({ initialSession, sessionTransport }: AppProps = {}) {
@@ -119,78 +101,61 @@ export function App({ initialSession, sessionTransport }: AppProps = {}) {
     };
   }, [controller, initialSession]);
 
-  const protectedControlsUnavailable = session.status !== 'authenticated';
-
   return (
-    <div className="app-shell">
-      <header className="app-header">
-        <div>
-          <p className="app-kicker">VibeQuest</p>
-          <h1>VibeQuest</h1>
-        </div>
-        <div className="header-actions" aria-label="Global actions">
-          <button
-            type="button"
-            className="icon-button"
-            aria-label="Notifications unavailable"
-            title="Notifications unavailable"
-            disabled
-          >
-            <BellIcon />
-          </button>
-          <button
-            type="button"
-            className="profile-button"
-            aria-label="Profile and settings unavailable"
-            title="Profile and settings unavailable"
-            disabled
-          >
-            <ProfileIcon />
-          </button>
-        </div>
-      </header>
-
-      <main className="app-content">
-        <section className="identity-card" aria-labelledby="identity-title">
-          <p className="app-kicker">Session</p>
-          <h2 id="identity-title">{statusTitle(session.status)}</h2>
+    <Shell
+      destination={destination}
+      onNavigate={setDestination}
+      sessionNotice={
+        <aside aria-label="Session status">
+          <h2>{statusTitle(session.status)}</h2>
           <p role="status" aria-live="polite">
             {sessionMessage(session)}
           </p>
-          {protectedControlsUnavailable ? (
-            <p className="protected-note">Protected actions are unavailable.</p>
+          {session.status === 'unavailable' ? (
+            <span className="sr-only">Protected actions are unavailable.</span>
           ) : null}
-        </section>
-
-        <section
-          className="destination-panel"
-          aria-labelledby="destination-title"
-        >
-          <p className="app-kicker">Destination</p>
-          <h2 id="destination-title">{destination}</h2>
-          <p>{destinationMessage(destination)}</p>
-        </section>
-      </main>
-
-      <nav className="root-navigation" aria-label="Primary navigation">
-        {destinations.map((item) => (
-          <button
-            key={item}
-            type="button"
-            className="destination-button"
-            data-destination={item}
-            aria-current={destination === item ? 'page' : undefined}
-            onClick={() => setDestination(item)}
+        </aside>
+      }
+    >
+      {(navigate) => (
+        <>
+          <section
+            data-page="home"
+            hidden={destination !== 'Home'}
+            aria-label="Home"
           >
-            {item === 'Share' ? (
-              <span className="share-heart" aria-hidden="true">
-                ♥
-              </span>
-            ) : null}
-            {item}
-          </button>
-        ))}
-      </nav>
-    </div>
+            <HomePage onExplore={() => navigate('Explore')} />
+          </section>
+          <section
+            data-page="explore"
+            hidden={destination !== 'Explore'}
+            aria-label="Explore"
+          >
+            <ExplorePage />
+          </section>
+          <section
+            data-page="share"
+            hidden={destination !== 'Share'}
+            aria-label="Share"
+          >
+            <SharePage />
+          </section>
+          <section
+            data-page="vibe"
+            hidden={destination !== 'Vibe'}
+            aria-label="Vibe"
+          >
+            <VibePage />
+          </section>
+          <section
+            data-page="purse"
+            hidden={destination !== 'Purse'}
+            aria-label="Purse"
+          >
+            <PursePage />
+          </section>
+        </>
+      )}
+    </Shell>
   );
 }
