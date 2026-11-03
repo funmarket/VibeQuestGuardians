@@ -10,6 +10,7 @@ export interface HostCapabilities {
 
 export interface HostAdapter {
   kind: HostKind;
+  identityAuthority: 'server-session';
   capabilities: HostCapabilities;
   theme: HostTheme;
   language?: string;
@@ -47,6 +48,7 @@ export function createHostAdapter(source: unknown = globalThis): HostAdapter {
   if (!webApp) {
     return {
       kind: 'browser',
+      identityAuthority: 'server-session',
       capabilities: {
         canUseHaptics: false,
         canUseBackButton: false,
@@ -68,6 +70,7 @@ export function createHostAdapter(source: unknown = globalThis): HostAdapter {
 
   return {
     kind: 'telegram',
+    identityAuthority: 'server-session',
     capabilities: {
       canUseHaptics: hasFunction(webApp.HapticFeedback, 'impactOccurred'),
       canUseBackButton:

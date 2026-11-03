@@ -14,7 +14,7 @@
     "packages/testing"
   ],
   "scripts": {
-    "test": "tsx --test packages/testing/src/api-runtime.test.ts packages/testing/src/architecture.test.ts packages/testing/src/client-foundation.test.ts packages/testing/src/error-envelope.test.ts packages/testing/src/identity-host.test.ts packages/testing/src/identity-session.test.ts packages/testing/src/runtime-identity.test.ts packages/testing/src/worker-runtime.test.ts",
+    "test": "tsx --test packages/testing/src/api-runtime.test.ts packages/testing/src/architecture.test.ts packages/testing/src/client-foundation.test.ts packages/testing/src/client-host-authority.test.ts packages/testing/src/error-envelope.test.ts packages/testing/src/identity-host.test.ts packages/testing/src/identity-session.test.ts packages/testing/src/runtime-identity.test.ts packages/testing/src/worker-runtime.test.ts",
     "test:database": "tsx --test packages/testing/src/database-foundation.test.ts",
     "migrate:staging": "tsx apps/api/src/database/run-migrations.ts",
     "typecheck": "tsc --noEmit -p packages/testing/tsconfig.json",
