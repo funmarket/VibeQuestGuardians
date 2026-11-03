@@ -1013,3 +1013,35 @@ The first probe's cleanup assertion exposed a probe-only multi-statement SQL err
 ### Final status
 
 S02-2 is **STAGING ACCEPTED for the authorized D01 session boundary**. This covers deployed source commit `bb0ec37a4435995e9eec408adfd2cec631f38dbd`, active staging deployment `4e0e6f0b-bb48-421b-ab98-df96a1121864`, and the acceptance items above. It does not claim Telegram, Redis, media, or production acceptance; those remain later authorized work.
+
+## S02-3 pre-implementation packet — 2026-11-03
+
+### Milestone and authorized scope
+
+- Milestone: S02, proposed slice `S02-3 — Web Host-Authority Integration and Five-Destination Shell`.
+- Repository/ref/HEAD: `funmarket/VibeQuestGuardians`, `vibefoundation`, `20cf25b1f1c81539b7855958fbe4907ebab2776e`.
+- Outcome: connect the existing Web client to the server-authoritative `/me` boundary and provide truthful guest/protected shell behavior with equal Home, Explore, Share, Vibe and Purse destinations; prepare only the non-deploying Telegram adapter seam.
+- Domain owner/canonical writer: D01 Identity and Authorization; PostgreSQL-backed API session boundary remains the only identity authority. Client owns presentation and navigation only.
+
+### Files allowed to change
+
+- `apps/client/src/App.tsx`
+- `apps/client/src/platform/host.ts`
+- `apps/client/src/platform/identity.ts` (new only if the inspected client boundary requires it)
+- `apps/client/src/styles/global.css`
+- `apps/client/index.html` (only for client title/metadata required by the shell)
+- `packages/testing/src/client-host-authority.test.ts` (new focused acceptance tests)
+- `packages/testing/src/client-foundation.test.ts` (only for compatible test updates)
+- `package.json` (only to register the focused test if required)
+- `EXECUTION_PLAN.md`
+
+Forbidden: API source, database migrations, Railway resources/configuration, Worker, Redis, media, Telegram deployment/linking/secrets, production, and unrelated documents.
+
+### Interfaces, behavior matrix, tests and verification
+
+- Consume the existing `/me` response shape and safe error envelope; do not invent credential issuance or storage.
+- Red tests first: valid identity, missing/expired/failed `/me`, truthful guest/protected behavior, five equal destinations, Share not elevated, no duplicate `/me`, truthful Telegram seam, and no invented business success.
+- Failure semantics: loading is distinct from authenticated, guest, expired/denied and unavailable; failed `/me` never promotes a guest; protected UI remains denied without server identity.
+- No persistence/migration impact. No deployment impact until local gates pass.
+- Verification: focused tests, full test suite, client/server typechecks, build, format/config checks, browser smoke and responsive checks where the available client runtime permits; then reconcile Railway before any existing-staging-only client deployment.
+- Stop conditions: missing real session issuance/transport requiring a new credential design; API or database changes; new infrastructure; conflicting current source; unsafe or unavailable runtime proof; any file outside the allowlist.
