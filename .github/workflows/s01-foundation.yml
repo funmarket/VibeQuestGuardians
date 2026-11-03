@@ -40,6 +40,9 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
       - name: Check formatting
         run: npm run format:check
 
@@ -59,6 +62,9 @@ jobs:
         run: npm run test:built
 
       - name: Run unit and runtime regression tests
+        env:
+          VQ_TEST_DATABASE_URL: postgresql://vq_ci:vq_ci_password@127.0.0.1:5432/vibequest_ci
+          VQ_TEST_DATABASE_TARGET: vibequest_ci
         run: npm test
 
       - name: Run architecture checks
