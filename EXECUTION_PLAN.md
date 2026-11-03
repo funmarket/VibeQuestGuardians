@@ -1085,3 +1085,22 @@ The repository suite reached 35 passed tests before the existing database-backed
 ### Runtime and deployment boundaries
 
 No staging or production deployment was authorized or performed for this disposable implementation checkout. Browser smoke against a configured API session was not run. Telegram signature verification, replay protection integration, and canonical account linking remain excluded as required by the packet.
+
+## S02-3 fix round 1 evidence — 2026-11-03
+
+The review of commit `329c86f89337681ba7680e829f60612b216ce099` identified an impossible default Web authentication path because the existing API requires a bearer token and this checkout contains no approved browser credential issuer, storage, or API-origin wiring. The fix round keeps that boundary truthful and fail-closed: it adds an explicit injectable API-origin/bearer transport, uses the existing `Authorization: Bearer` contract when a verified token provider is supplied, and renders `Unavailable` without making a fabricated credential request when no safe transport is available. No new credential storage or issuance was introduced.
+
+### Fix-round red/green evidence
+
+| Stage | Command | Result |
+|---|---|---|
+| RED | `node node_modules/tsx/dist/cli.mjs --test packages/testing/src/client-host-authority.test.ts` after adding fix-round acceptance cases | 5 failed, including missing explicit bearer transport, malformed-principal rejection, session controller, truthful controls/copy |
+| GREEN | same focused command after implementation | 12 passed, 0 failed; includes browser Vite smoke for App unavailable state, navigation, and disabled global controls |
+| Client/testing typechecks | `node node_modules/typescript/bin/tsc --noEmit -p apps/client/tsconfig.json`; `node node_modules/typescript/bin/tsc --noEmit -p packages/testing/tsconfig.json` | exit 0 |
+| API/Worker builds | `node node_modules/typescript/bin/tsc -p apps/api/tsconfig.build.json`; `node node_modules/typescript/bin/tsc -p apps/worker/tsconfig.build.json` | exit 0 |
+| Client build | Vite build from `apps/client` | exit 0 |
+| Formatting/lint/diff | Prettier check, ESLint config check, `git diff --check` | passed |
+
+### Remaining blocker
+
+The separate API bearer contract is now explicit and tested, but the current allowed client composition has no safe source-truth credential issuer/storage or approved API-origin runtime configuration to supply it. The default App therefore remains truthfully unavailable rather than claiming authenticated Web integration. The repository full suite remains blocked at the existing database-backed session test when `VQ_TEST_DATABASE_URL` is unset; the fix-round focused suite and browser smoke pass.

@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  loadSessionOnce,
+  createSessionController,
+  createUnavailableSessionTransport,
   type ClientSession,
-  type SessionFetcher,
+  type SessionStatus,
+  type SessionTransport,
 } from './platform/identity.js';
 import { createHostAdapter } from './platform/host.js';
 import { resolvePlatformPreferences } from './platform/preferences.js';
@@ -12,35 +14,54 @@ type Destination = (typeof destinations)[number];
 
 export interface AppProps {
   initialSession?: ClientSession;
-  sessionFetcher?: SessionFetcher;
+  sessionTransport?: SessionTransport;
 }
 
 function sessionMessage(session: ClientSession): string {
   switch (session.status) {
     case 'loading':
-      return 'Checking your server-authorized session…';
+      return 'Loading session.';
     case 'authenticated':
-      return `Signed in as ${session.principal.accountId}.`;
+      return 'Authenticated.';
     case 'guest':
-      return 'You are browsing as a guest. Sign-in is unavailable in this client slice.';
+      return 'Guest session. Protected actions are unavailable.';
     case 'expired':
-      return 'Your session expired or was revoked. Sign-in is unavailable in this client slice.';
+      return 'Expired session. Protected actions are unavailable.';
     case 'denied':
-      return 'Your session was not accepted by the server. Protected actions remain unavailable.';
+      return 'Denied session. Protected actions are unavailable.';
     case 'offline':
-      return 'The identity service could not be reached. Protected actions remain unavailable.';
+      return 'Offline. Protected actions are unavailable.';
     case 'unavailable':
-      return 'The identity service is unavailable. Protected actions remain unavailable.';
+      return 'Unavailable session transport.';
   }
 }
 
 function destinationMessage(destination: Destination): string {
-  return destination === 'Home'
-    ? 'Public shell is ready. Domain content will appear only when its authoritative service is available.'
-    : `${destination} is not yet available in this client slice.`;
+  return `${destination} content is not yet available.`;
 }
 
-export function App({ initialSession, sessionFetcher }: AppProps = {}) {
+function statusTitle(status: SessionStatus): string {
+  return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+function BellIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
+    </svg>
+  );
+}
+
+function ProfileIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8" r="3" />
+      <path d="M5 21a7 7 0 0 1 14 0" />
+    </svg>
+  );
+}
+
+export function App({ initialSession, sessionTransport }: AppProps = {}) {
   const host = useMemo(() => createHostAdapter(), []);
   const preferences = useMemo(
     () =>
@@ -56,10 +77,23 @@ export function App({ initialSession, sessionFetcher }: AppProps = {}) {
       }),
     [host],
   );
+  const transport = useMemo(
+    () => sessionTransport ?? createUnavailableSessionTransport(),
+    [sessionTransport],
+  );
+  const controller = useMemo(
+    () => createSessionController(transport),
+    [transport],
+  );
   const [session, setSession] = useState<ClientSession>(
     initialSession ?? { status: 'loading' },
   );
+  const sessionRef = useRef<ClientSession>(session);
   const [destination, setDestination] = useState<Destination>('Home');
+
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
 
   useEffect(() => {
     document.documentElement.dir = preferences.direction;
@@ -71,56 +105,60 @@ export function App({ initialSession, sessionFetcher }: AppProps = {}) {
   useEffect(() => {
     if (initialSession) return;
     let active = true;
-    void loadSessionOnce(sessionFetcher).then((nextSession) => {
+    const apply = (nextSession: ClientSession) => {
       if (active) setSession(nextSession);
-    });
+    };
+    void controller.load('loading').then(apply);
+    const revalidate = () => {
+      void controller.refresh(sessionRef.current.status).then(apply);
+    };
+    window.addEventListener('focus', revalidate);
     return () => {
       active = false;
+      window.removeEventListener('focus', revalidate);
     };
-  }, [initialSession, sessionFetcher]);
+  }, [controller, initialSession]);
+
+  const protectedControlsUnavailable = session.status !== 'authenticated';
 
   return (
     <div className="app-shell">
       <header className="app-header">
         <div>
           <p className="app-kicker">VibeQuest</p>
-          <h1>Find your next good thing.</h1>
+          <h1>VibeQuest</h1>
         </div>
         <div className="header-actions" aria-label="Global actions">
           <button
             type="button"
             className="icon-button"
-            aria-label="Notifications"
+            aria-label="Notifications unavailable"
+            title="Notifications unavailable"
+            disabled
           >
-            ♧
+            <BellIcon />
           </button>
           <button
             type="button"
             className="profile-button"
-            aria-label="Profile and settings"
+            aria-label="Profile and settings unavailable"
+            title="Profile and settings unavailable"
+            disabled
           >
-            {session.status === 'authenticated' ? 'Profile' : 'Guest'}
+            <ProfileIcon />
           </button>
         </div>
       </header>
 
-      <main className="app-content" aria-live="polite">
+      <main className="app-content">
         <section className="identity-card" aria-labelledby="identity-title">
-          <p className="app-kicker">Server-authoritative identity</p>
-          <h2 id="identity-title">
-            {session.status === 'authenticated'
-              ? 'Authenticated'
-              : session.status === 'loading'
-                ? 'Loading'
-                : 'Guest access'}
-          </h2>
-          <p>{sessionMessage(session)}</p>
-          {session.status !== 'authenticated' &&
-          session.status !== 'loading' ? (
-            <p className="protected-note">
-              Protected writes are denied until the server authorizes an
-              identity.
-            </p>
+          <p className="app-kicker">Session</p>
+          <h2 id="identity-title">{statusTitle(session.status)}</h2>
+          <p role="status" aria-live="polite">
+            {sessionMessage(session)}
+          </p>
+          {protectedControlsUnavailable ? (
+            <p className="protected-note">Protected actions are unavailable.</p>
           ) : null}
         </section>
 
